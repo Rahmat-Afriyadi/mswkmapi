@@ -9,7 +9,6 @@ import (
 	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
 )
 
@@ -32,26 +31,26 @@ import (
 
 // }
 
-func GetConnection() *sql.DB {
-	errEnv := godotenv.Load()
-	if errEnv != nil {
-		fmt.Println("ini errornya ", errEnv)
-		panic("Failed to load env file")
-	}
+// func GetConnection() *sql.DB {
+// 	errEnv := godotenv.Load()
+// 	if errEnv != nil {
+// 		fmt.Println("ini errornya ", errEnv)
+// 		panic("Failed to load env file")
+// 	}
 
-	db, err := sql.Open("mysql", os.Getenv("DB_WKM"))
-	// db, err := sql.Open("mysql", "root2:root2@tcp(192.168.70.30:3306)/db_wkm?parseTime=true")
-	if err != nil {
-		fmt.Println(err)
-	}
+// 	db, err := sql.Open("mysql", os.Getenv("DB_WKM"))
+// 	// db, err := sql.Open("mysql", "root2:root2@tcp(192.168.70.30:3306)/db_wkm?parseTime=true")
+// 	if err != nil {
+// 		fmt.Println(err)
+// 	}
 
-	db.SetMaxIdleConns(5)
-	db.SetMaxOpenConns(20)
-	db.SetConnMaxIdleTime(5 * time.Minute)
-	db.SetConnMaxLifetime(60 * time.Minute)
+// 	db.SetMaxIdleConns(5)
+// 	db.SetMaxOpenConns(20)
+// 	db.SetConnMaxIdleTime(5 * time.Minute)
+// 	db.SetConnMaxLifetime(60 * time.Minute)
 
-	return db
-}
+// 	return db
+// }
 
 func GetConnectionMain() (*gorm.DB, *sql.DB) {
 
@@ -61,6 +60,7 @@ func GetConnectionMain() (*gorm.DB, *sql.DB) {
 		panic("Failed to load env file")
 	}
 	dsn := os.Getenv("MS_WKM")
+	fmt.Println("ini url database yaa ", dsn)
 	time.LoadLocation("Asia/Jakarta")
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
 		SkipDefaultTransaction:                   true,
@@ -86,36 +86,36 @@ func GetConnectionMain() (*gorm.DB, *sql.DB) {
 	return db, sqlDB
 }
 
-func NewAsuransiGorm() (*gorm.DB, *sql.DB) {
-	errEnv := godotenv.Load()
-	if errEnv != nil {
-		fmt.Println("ini errornya ", errEnv)
-		panic("Failed to load env file")
-	}
-	time.LoadLocation("Asia/Jakarta")
-	dsn := os.Getenv("WANDA_ASURANSI")
-	// dsn := "root2:root2@tcp(192.168.12.171:3306)/wanda_asuransi?parseTime=true&loc=Asia%2FJakarta"
+// func NewAsuransiGorm() (*gorm.DB, *sql.DB) {
+// 	errEnv := godotenv.Load()
+// 	if errEnv != nil {
+// 		fmt.Println("ini errornya ", errEnv)
+// 		panic("Failed to load env file")
+// 	}
+// 	time.LoadLocation("Asia/Jakarta")
+// 	dsn := os.Getenv("WANDA_ASURANSI")
+// 	// dsn := "root2:root2@tcp(192.168.12.171:3306)/wanda_asuransi?parseTime=true&loc=Asia%2FJakarta"
 
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
-		Logger:                                   logger.Default.LogMode(logger.Info),
-		SkipDefaultTransaction:                   true,
-		DisableForeignKeyConstraintWhenMigrating: true,
-		NamingStrategy: schema.NamingStrategy{
-			NoLowerCase:         true,
-			IdentifierMaxLength: 30,
-		},
-		PrepareStmt:     true,
-		CreateBatchSize: 50,
-	})
-	if err != nil {
-		fmt.Println("Masuk sini gk guys logger ", err)
-		panic(err)
-	}
-	sqlDB, _ := db.DB()
+// 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+// 		Logger:                                   logger.Default.LogMode(logger.Info),
+// 		SkipDefaultTransaction:                   true,
+// 		DisableForeignKeyConstraintWhenMigrating: true,
+// 		NamingStrategy: schema.NamingStrategy{
+// 			NoLowerCase:         true,
+// 			IdentifierMaxLength: 30,
+// 		},
+// 		PrepareStmt:     true,
+// 		CreateBatchSize: 50,
+// 	})
+// 	if err != nil {
+// 		fmt.Println("Masuk sini gk guys logger ", err)
+// 		panic(err)
+// 	}
+// 	sqlDB, _ := db.DB()
 
-	sqlDB.SetMaxOpenConns(50)
-	sqlDB.SetMaxIdleConns(10)
-	sqlDB.SetConnMaxLifetime(20 * time.Minute)
-	sqlDB.SetConnMaxIdleTime(5 * time.Minute)
-	return db, sqlDB
-}
+// 	sqlDB.SetMaxOpenConns(50)
+// 	sqlDB.SetMaxIdleConns(10)
+// 	sqlDB.SetConnMaxLifetime(20 * time.Minute)
+// 	sqlDB.SetConnMaxIdleTime(5 * time.Minute)
+// 	return db, sqlDB
+// }
