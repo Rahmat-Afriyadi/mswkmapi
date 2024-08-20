@@ -13,6 +13,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/joho/godotenv"
 )
 
 var (
@@ -29,6 +30,12 @@ var (
 )
 
 func main() {
+
+	errEnv := godotenv.Load()
+	if errEnv != nil {
+		fmt.Println("ini errornya ", errEnv)
+		panic("Failed to load env file")
+	}
 
 	defer sqlConnMain.Close()
 
@@ -70,6 +77,6 @@ func main() {
 	}
 	fmt.Println("Current Directory:", dir)
 
-	app.Listen(":3001")
+	app.Listen(":" + os.Getenv("PORT"))
 
 }
