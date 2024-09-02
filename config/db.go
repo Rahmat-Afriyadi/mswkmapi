@@ -60,7 +60,6 @@ func GetConnectionMain() (*gorm.DB, *sql.DB) {
 		panic("Failed to load env file")
 	}
 	dsn := os.Getenv("MS_WKM")
-	fmt.Println("ini url database yaa ", dsn)
 	time.LoadLocation("Asia/Jakarta")
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
 		SkipDefaultTransaction:                   true,

@@ -31,7 +31,7 @@ func (s *memberRepository) Mine(userId string) []entity.Member {
 
 func (s *memberRepository) AddCard(data request.AddMemberCard) (entity.Member, error) {
 	card := entity.Member{}
-	s.connUser.Where("no_msn = ? or no_kartu = ?", data.Kode, data.Kode).Where("nm_customer11 = ?", data.Nama).First(&card)
+	s.connUser.Where("no_msn = ? or no_kartu = ?", data.Kode, data.Kode).First(&card)
 	if card.NoMsn == "" {
 		return entity.Member{}, errors.New("nomor kartu atau nomor mesin tidak ditemukan")
 	}

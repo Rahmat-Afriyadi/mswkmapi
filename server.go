@@ -71,12 +71,6 @@ func main() {
 	member.Get("/my-card", middleware.DeserializeUser, memberController.Mine)
 	member.Post("/add-card", middleware.DeserializeUser, memberController.AddCard)
 
-	dir, err := os.Getwd()
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println("Current Directory:", dir)
-
 	app.Listen(":" + os.Getenv("PORT"))
 
 }
