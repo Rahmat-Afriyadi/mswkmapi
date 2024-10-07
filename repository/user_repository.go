@@ -2,7 +2,6 @@ package repository
 
 import (
 	"errors"
-	"fmt"
 	"wkm/entity"
 	"wkm/request"
 
@@ -48,7 +47,6 @@ func (lR *userRepository) ResetPassword(data request.ResetPassword) {
 
 func (lR *userRepository) CreateUser(data request.SignupRequest) (entity.User, error) {
 	user := entity.User{NoHp: data.NoHp}
-	fmt.Println("ini user yaa ", user)
 	lR.connUser.Where("no_hp", user.NoHp).First(&user)
 	if user.ID != "" {
 		return user, errors.New("nomor tersebut telah terdaftar")

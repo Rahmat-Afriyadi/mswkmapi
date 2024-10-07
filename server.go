@@ -27,6 +27,10 @@ var (
 	memberRepository repository.MemberRepository = repository.NewMemberRepository(connMain)
 	memberService    service.MemberService       = service.NewMemberService(memberRepository)
 	memberController controller.MemberController = controller.NewMemberController(memberService)
+
+	profileRepository repository.ProfileRepository = repository.NewProfileRepository(connMain)
+	profileService    service.ProfileService       = service.NewProfileService(profileRepository)
+	profileController controller.ProfileController = controller.NewProfileController(profileService)
 )
 
 func main() {
@@ -66,6 +70,11 @@ func main() {
 	auth.Post("/reset-password-by-otp", authController.ResetPasswordByOtp)
 	auth.Post("/logout", authController.LogoutUser)
 	auth.Get("/generate-password", authController.GeneratePassword)
+
+	profile := app.Group("/profile")
+	profile.Get("/me", middleware.DeserializeUser, profileController.Me)
+	profile.Post("/upload/image-profile", middleware.DeserializeUser, profileController.UploadImageProfile)
+	profile.Post("/update/profile-data", middleware.DeserializeUser, profileController.Update)
 
 	member := app.Group("/member")
 	member.Get("/my-card", middleware.DeserializeUser, memberController.Mine)
