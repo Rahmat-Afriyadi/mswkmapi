@@ -55,8 +55,8 @@ func main() {
 	}))
 
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "https://gofiber.io, http://localhost:3002",
-		AllowHeaders: "Access-Control-Allow-Headers, Origin, Content-Type, Accept, Authorization",
+		AllowOrigins: "https://gofiber.io, http://localhost:3002, http://192.168.70.17:3002",
+		AllowHeaders: "Access-Control-Allow-Headers, Origin, Content-Type, Accept, Authorization, Access-Control-Allow-Origin",
 	}))
 
 	auth := app.Group("/auth")

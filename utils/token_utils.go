@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"time"
 
@@ -74,8 +75,11 @@ func ValidateToken(token string, publicKey string) (*TokenDetails, error) {
 	if !ok || !parsedToken.Valid {
 		return nil, fmt.Errorf("validate: invalid token")
 	}
-
+	userId, ok := claims["sub"].(string)
+	if !ok {
+		return &TokenDetails{}, errors.New("Ini gk ada yaa")
+	}
 	return &TokenDetails{
-		UserID: claims["sub"].(string),
+		UserID: userId,
 	}, nil
 }
