@@ -64,11 +64,5 @@ func (lR *userRepository) FindByPhoneNumber(username string) entity.User {
 	var user entity.User
 	lR.connUser.Where("no_hp", username).First(&user)
 
-	// var permissions []entity.Permission
-	// lR.connUser.Where("role_id", user.RoleId).Find(&permissions)
-	// for _, v := range permissions {
-	// 	user.Permissions = append(user.Permissions, v.Name)
-	// }
-
 	return user
 }

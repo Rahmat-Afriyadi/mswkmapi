@@ -5,6 +5,8 @@ import (
 	"os"
 	"wkm/config"
 	"wkm/controller"
+	"wkm/internal/merchant"
+	"wkm/internal/outlet"
 	"wkm/middleware"
 	"wkm/repository"
 	"wkm/service"
@@ -31,6 +33,10 @@ var (
 	profileRepository repository.ProfileRepository = repository.NewProfileRepository(connMain)
 	profileService    service.ProfileService       = service.NewProfileService(profileRepository)
 	profileController controller.ProfileController = controller.NewProfileController(profileService)
+
+	masterDataRepository repository.MasterDataRepository = repository.NewMasterDataRepository(connMain)
+	masterDataService    service.MasterDataService       = service.NewMasterDataService(masterDataRepository)
+	masterDataController controller.MasterDataController = controller.NewMasterDataController(masterDataService)
 )
 
 func main() {
@@ -42,6 +48,9 @@ func main() {
 	}
 
 	defer sqlConnMain.Close()
+
+	// connMain.AutoMigrate(&merchant.Merchant{})
+	// connMain.AutoMigrate(&outlet.Outlet{})
 
 	app := fiber.New(fiber.Config{})
 	app.Static("/uploads", "./uploads")
@@ -76,9 +85,18 @@ func main() {
 	profile.Post("/upload/image-profile", middleware.DeserializeUser, profileController.UploadImageProfile)
 	profile.Post("/update/profile-data", middleware.DeserializeUser, profileController.Update)
 
+	masterData := app.Group("/master-data")
+	masterData.Get("/kategori-merchant", middleware.DeserializeUser, masterDataController.KategoriMerchantAll)
+	masterData.Get("/media-promosi", middleware.DeserializeUser, masterDataController.MediaPromosiAll)
+	masterData.Get("/pic-mro", middleware.DeserializeUser, masterDataController.PicMroAll)
+
 	member := app.Group("/member")
 	member.Get("/my-card", middleware.DeserializeUser, memberController.Mine)
 	member.Post("/add-card", middleware.DeserializeUser, memberController.AddCard)
+
+	// admin
+	merchant.RegisterRoutes(app, connMain)
+	outlet.RegisterRoutes(app, connMain)
 
 	app.Listen(":" + os.Getenv("PORT"))
 

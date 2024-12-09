@@ -182,7 +182,7 @@ func (aC *authController) SignInUser(c *fiber.Ctx) error {
 	// 	Domain:   "localhost",
 	// })
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": "success", "access_token": accessTokenDetails.Token, "name": user.Name, "refresh_token": refreshTokenDetails.Token})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": "success", "access_token": accessTokenDetails.Token, "name": user.Name, "refresh_token": refreshTokenDetails.Token, "is_admin": user.IsAdmin, "email": user.Email})
 }
 
 func (aC *authController) RefreshAccessToken(c *fiber.Ctx) error {
@@ -235,7 +235,7 @@ func (aC *authController) RefreshAccessToken(c *fiber.Ctx) error {
 	// 	Domain:   "localhost",
 	// })
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": "success", "access_token": accessTokenDetails.Token, "refresh_token": refreshTokenDetails.Token})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": "success", "access_token": accessTokenDetails.Token, "refresh_token": refreshTokenDetails.Token, "is_admin": user.IsAdmin})
 }
 
 func (aC *authController) RefreshAccessTokenAsuransi(c *fiber.Ctx) error {
