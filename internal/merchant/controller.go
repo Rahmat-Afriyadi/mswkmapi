@@ -15,12 +15,13 @@ func RegisterRoutes(app *fiber.App, db *gorm.DB) {
 	service := NewMerchantService(repo)
 	handler := NewMerchantController(service)
 
-	userRoutes := app.Group("/merchants")
-	userRoutes.Get("/master-data", middleware.DeserializeUser, handler.MasterData)
-	userRoutes.Get("/master-data/count", middleware.DeserializeUser, handler.MasterDataCount)
-	userRoutes.Get("/detail/:id", middleware.DeserializeUser, handler.DetailMerchant)
-	userRoutes.Post("/create-merchant", middleware.DeserializeUser, handler.CreateMerchant)
-	userRoutes.Post("/update-merchant", middleware.DeserializeUser, handler.UpdateMerchant)
+	routes := app.Group("/merchants")
+	routes.Get("/master-data", middleware.DeserializeUser, handler.MasterData)
+	routes.Get("/master-data/count", middleware.DeserializeUser, handler.MasterDataCount)
+	routes.Get("/master-data/all", middleware.DeserializeUser, handler.MasterDataAll)
+	routes.Get("/detail/:id", middleware.DeserializeUser, handler.DetailMerchant)
+	routes.Post("/create-merchant", middleware.DeserializeUser, handler.CreateMerchant)
+	routes.Post("/update-merchant", middleware.DeserializeUser, handler.UpdateMerchant)
 }
 
 type MerchantController interface {
@@ -28,6 +29,7 @@ type MerchantController interface {
 	UpdateMerchant(ctx *fiber.Ctx) error
 	MasterData(ctx *fiber.Ctx) error
 	MasterDataCount(ctx *fiber.Ctx) error
+	MasterDataAll(ctx *fiber.Ctx) error
 	DetailMerchant(ctx *fiber.Ctx) error
 }
 
@@ -46,6 +48,9 @@ func (tr *mstMtrController) DetailMerchant(ctx *fiber.Ctx) error {
 	return ctx.JSON(tr.mstMtrService.DetailMerchant(id))
 }
 
+func (tr *mstMtrController) MasterDataAll(ctx *fiber.Ctx) error {
+	return ctx.JSON(map[string]interface{}{"data": tr.mstMtrService.MasterDataAll(), "status": "success"})
+}
 func (tr *mstMtrController) MasterData(ctx *fiber.Ctx) error {
 	search := ctx.Query("search")
 	limit, _ := strconv.Atoi(ctx.Query("limit"))

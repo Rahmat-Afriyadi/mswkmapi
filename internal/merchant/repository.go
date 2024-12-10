@@ -12,6 +12,7 @@ type MerchantRepository interface {
 	CreateMerchant(data Merchant) error
 	MasterData(search string, limit int, pageParams int) []Merchant
 	MasterDataCount(search string) int64
+	MasterDataAll() []Merchant
 	DetailMerchant(id string) Merchant
 	Update(body Merchant) error
 }
@@ -99,4 +100,10 @@ func (lR *merchantRepository) MasterDataCount(search string) int64 {
 	query := lR.conn.Where("nama like ? or alamat like  ? ", "%"+search+"%", "%"+search+"%")
 	query.Select("id").Find(&merchant)
 	return int64(len(merchant))
+}
+
+func (lR *merchantRepository) MasterDataAll() []Merchant {
+	var merchant []Merchant
+	lR.conn.Select("id, nama").Find(&merchant)
+	return merchant
 }

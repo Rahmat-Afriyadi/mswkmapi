@@ -5,6 +5,7 @@ import (
 	"wkm/entity"
 	"wkm/internal/merchant"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -30,6 +31,8 @@ func (Outlet) TableName() string {
 }
 
 func (b *Outlet) BeforeCreate(tx *gorm.DB) (err error) {
-	// b.ID = uuid.New().String()
+	if b.ID == "" {
+		b.ID = uuid.New().String()
+	}
 	return
 }

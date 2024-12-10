@@ -3,6 +3,7 @@ package outlet
 import (
 	"fmt"
 	"strconv"
+	"wkm/entity"
 	"wkm/middleware"
 
 	"github.com/gofiber/fiber/v2"
@@ -14,11 +15,12 @@ func RegisterRoutes(app *fiber.App, db *gorm.DB) {
 	service := NewOutletService(repo)
 	handler := NewOutletController(service)
 
-	userRoutes := app.Group("/outlets")
-	userRoutes.Get("/master-data", middleware.DeserializeUser, handler.MasterData)
-	userRoutes.Get("/master-data/count", middleware.DeserializeUser, handler.MasterDataCount)
-	userRoutes.Post("/create-outlet", middleware.DeserializeUser, handler.CreateOutlet)
-	userRoutes.Post("/update-outlet", middleware.DeserializeUser, handler.UpdateOutlet)
+	routes := app.Group("/outlets")
+	routes.Get("/master-data", middleware.DeserializeUser, handler.MasterData)
+	routes.Get("/master-data/count", middleware.DeserializeUser, handler.MasterDataCount)
+	routes.Get("/detail/:id", middleware.DeserializeUser, handler.DetailOutlet)
+	routes.Post("/create-outlet", middleware.DeserializeUser, handler.CreateOutlet)
+	routes.Post("/update-outlet", middleware.DeserializeUser, handler.UpdateOutlet)
 }
 
 type OutletController interface {
@@ -62,6 +64,9 @@ func (tr *mstMtrController) UpdateOutlet(ctx *fiber.Ctx) error {
 	if err != nil {
 		fmt.Println("error body parser ", err)
 	}
+	user := ctx.Locals("user")
+	details, _ := user.(entity.User)
+	body.UpdatedBy = details.Name
 	err = tr.mstMtrService.Update(body)
 	if err != nil {
 		return ctx.JSON(map[string]interface{}{"message": err.Error()})
@@ -74,6 +79,9 @@ func (tr *mstMtrController) CreateOutlet(ctx *fiber.Ctx) error {
 	if err != nil {
 		fmt.Println("error body parser ", err)
 	}
+	user := ctx.Locals("user")
+	details, _ := user.(entity.User)
+	body.CreatedBy = details.Name
 	err = tr.mstMtrService.CreateOutlet(body)
 	if err != nil {
 		return ctx.JSON(map[string]string{"message": err.Error()})

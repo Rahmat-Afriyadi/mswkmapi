@@ -4,6 +4,7 @@ type MerchantService interface {
 	CreateMerchant(data Merchant) error
 	MasterData(search string, limit int, pageParams int) []Merchant
 	MasterDataCount(search string) int64
+	MasterDataAll() []Merchant
 	DetailMerchant(id string) Merchant
 	Update(body Merchant) error
 }
@@ -29,6 +30,10 @@ func (s *mstMtrService) MasterData(search string, limit int, pageParams int) []M
 }
 func (s *mstMtrService) MasterDataCount(search string) int64 {
 	return s.trR.MasterDataCount(search)
+}
+
+func (s *mstMtrService) MasterDataAll() []Merchant {
+	return s.trR.MasterDataAll()
 }
 
 func (s *mstMtrService) CreateMerchant(data Merchant) error {

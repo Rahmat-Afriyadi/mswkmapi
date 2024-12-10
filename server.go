@@ -50,7 +50,7 @@ func main() {
 	defer sqlConnMain.Close()
 
 	connMain.AutoMigrate(&merchant.Merchant{})
-	// connMain.AutoMigrate(&outlet.Outlet{})
+	connMain.AutoMigrate(&outlet.Outlet{})
 
 	app := fiber.New(fiber.Config{})
 	app.Static("/uploads", "./uploads")
