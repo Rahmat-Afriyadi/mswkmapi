@@ -28,35 +28,63 @@ func NewMerchantRepository(conn *gorm.DB) MerchantRepository {
 
 func (lR *merchantRepository) DetailMerchant(id string) Merchant {
 	merchant := Merchant{ID: id}
-	lR.conn.Find(&merchant)
+	lR.conn.Preload("Kategori").Preload("MediaPromosi").Preload("NamaPICMRO").Find(&merchant)
 	return merchant
 }
 
 func (lR *merchantRepository) CreateMerchant(data Merchant) error {
-	result := lR.conn.Create(&data)
+	kategori := data.Kategori
+	mediaPromosi := data.MediaPromosi
+	picMro := data.NamaPICMRO
+	result := lR.conn.Omit("Kategori", "MediaPromosi", "NamaPICMRO").Save(&data)
 	if result.Error != nil {
 		fmt.Println("ini error ", result.Error)
 		return result.Error
-	} else {
-		return nil
 	}
+	err := lR.conn.Model(&data).Association("Kategori").Replace(kategori)
+	if err != nil {
+		return err
+	}
+	err = lR.conn.Model(&data).Association("MediaPromosi").Replace(mediaPromosi)
+	if err != nil {
+		return err
+	}
+	err = lR.conn.Model(&data).Association("NamaPICMRO").Replace(picMro)
+	if err != nil {
+		return err
+	}
+	return nil
 
 }
 
 func (lR *merchantRepository) Update(data Merchant) error {
 	record := Merchant{ID: data.ID}
-	lR.conn.Find(&record)
+	lR.conn.First(&record)
 	if record.Nama == "" {
 		return errors.New("maaf data tidak ada")
 	}
-	result := lR.conn.Save(&data)
-	// lR.Model(&user).Association("Roles").Replace(newRoles)
+	kategori := data.Kategori
+	mediaPromosi := data.MediaPromosi
+	picMro := data.NamaPICMRO
+
+	result := lR.conn.Omit("Kategori", "MediaPromosi", "NamaPICMRO").Save(&data)
 	if result.Error != nil {
 		fmt.Println("ini error ", result.Error)
 		return result.Error
-	} else {
-		return nil
 	}
+	err := lR.conn.Model(&record).Association("Kategori").Replace(kategori)
+	if err != nil {
+		return err
+	}
+	err = lR.conn.Model(&record).Association("MediaPromosi").Replace(mediaPromosi)
+	if err != nil {
+		return err
+	}
+	err = lR.conn.Model(&record).Association("NamaPICMRO").Replace(picMro)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (lR *merchantRepository) MasterData(search string, limit int, pageParams int) []Merchant {

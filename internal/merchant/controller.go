@@ -3,6 +3,7 @@ package merchant
 import (
 	"fmt"
 	"strconv"
+	"wkm/entity"
 	"wkm/middleware"
 
 	"github.com/gofiber/fiber/v2"
@@ -17,6 +18,7 @@ func RegisterRoutes(app *fiber.App, db *gorm.DB) {
 	userRoutes := app.Group("/merchants")
 	userRoutes.Get("/master-data", middleware.DeserializeUser, handler.MasterData)
 	userRoutes.Get("/master-data/count", middleware.DeserializeUser, handler.MasterDataCount)
+	userRoutes.Get("/detail/:id", middleware.DeserializeUser, handler.DetailMerchant)
 	userRoutes.Post("/create-merchant", middleware.DeserializeUser, handler.CreateMerchant)
 	userRoutes.Post("/update-merchant", middleware.DeserializeUser, handler.UpdateMerchant)
 }
@@ -62,6 +64,9 @@ func (tr *mstMtrController) UpdateMerchant(ctx *fiber.Ctx) error {
 	if err != nil {
 		fmt.Println("error body parser ", err)
 	}
+	user := ctx.Locals("user")
+	details, _ := user.(entity.User)
+	body.UpdatedBy = details.Name
 	err = tr.mstMtrService.Update(body)
 	if err != nil {
 		return ctx.JSON(map[string]interface{}{"message": err.Error()})
@@ -74,6 +79,9 @@ func (tr *mstMtrController) CreateMerchant(ctx *fiber.Ctx) error {
 	if err != nil {
 		fmt.Println("error body parser ", err)
 	}
+	user := ctx.Locals("user")
+	details, _ := user.(entity.User)
+	body.CreatedBy = details.Name
 	err = tr.mstMtrService.CreateMerchant(body)
 	if err != nil {
 		return ctx.JSON(map[string]string{"message": err.Error()})

@@ -7,7 +7,7 @@ import (
 
 type Kategori struct {
 	ID   string `form:"id" json:"id" gorm:"primary_key;column:id"`
-	Nama string `form:"nama" json:"nama" gorm:"type:varchar(100);column:nama"`
+	Nama string `form:"nama" json:"name" gorm:"type:varchar(100);column:nama"`
 }
 
 func (Kategori) TableName() string {
@@ -15,6 +15,8 @@ func (Kategori) TableName() string {
 }
 
 func (b *Kategori) BeforeCreate(tx *gorm.DB) (err error) {
-	b.ID = uuid.New().String()
+	if b.ID == "" {
+		b.ID = uuid.New().String()
+	}
 	return
 }

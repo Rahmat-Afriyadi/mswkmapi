@@ -49,7 +49,7 @@ func main() {
 
 	defer sqlConnMain.Close()
 
-	// connMain.AutoMigrate(&merchant.Merchant{})
+	connMain.AutoMigrate(&merchant.Merchant{})
 	// connMain.AutoMigrate(&outlet.Outlet{})
 
 	app := fiber.New(fiber.Config{})
