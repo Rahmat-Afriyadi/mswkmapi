@@ -18,6 +18,7 @@ func RegisterRoutes(app *fiber.App, db *gorm.DB) {
 	routes := app.Group("/merchants")
 	routes.Get("/master-data", middleware.DeserializeUser, handler.MasterData)
 	routes.Get("/master-data/count", middleware.DeserializeUser, handler.MasterDataCount)
+	routes.Get("/master-data/filter", handler.MasterData)
 	routes.Get("/master-data/all", middleware.DeserializeUser, handler.MasterDataAll)
 	routes.Get("/detail/:id", middleware.DeserializeUser, handler.DetailMerchant)
 	routes.Post("/create-merchant", middleware.DeserializeUser, handler.CreateMerchant)
@@ -53,9 +54,10 @@ func (tr *mstMtrController) MasterDataAll(ctx *fiber.Ctx) error {
 }
 func (tr *mstMtrController) MasterData(ctx *fiber.Ctx) error {
 	search := ctx.Query("search")
+	kategori := ctx.Query("kategori")
 	limit, _ := strconv.Atoi(ctx.Query("limit"))
 	pageParams, _ := strconv.Atoi(ctx.Query("pageParams"))
-	return ctx.JSON(tr.mstMtrService.MasterData(search, limit, pageParams))
+	return ctx.JSON(tr.mstMtrService.MasterData(search, kategori, limit, pageParams))
 }
 
 func (tr *mstMtrController) MasterDataCount(ctx *fiber.Ctx) error {

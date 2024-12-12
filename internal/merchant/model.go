@@ -19,6 +19,7 @@ type Merchant struct {
 	ValidFrom    time.Time             `form:"valid_from" json:"valid_from" gorm:"type:DATE;column:valid_from"`
 	ValidThru    time.Time             `form:"valid_thru" json:"valid_thru" gorm:"type:DATE;column:valid_thru"`
 	Logo         string                `form:"logo" json:"logo" gorm:"type:varchar(100);column:logo"`
+	Outlet       []entity.Outlet       `form:"outlets" json:"outlets" gorm:"foreignKey:MerchantId"`
 	Kategori     []entity.Kategori     `json:"kategori" gorm:"many2many:merchant_kategori;association_autocreate:false;"`
 	Email        string                `form:"email" json:"email" gorm:"type:varchar(100);column:email"`
 	Website      string                `form:"website" json:"website" gorm:"type:varchar(100);column:website"`

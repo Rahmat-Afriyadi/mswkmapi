@@ -3,7 +3,6 @@ package outlet
 import (
 	"time"
 	"wkm/entity"
-	"wkm/internal/merchant"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -18,7 +17,7 @@ type Outlet struct {
 	NoTelpPIC    string                `form:"no_telp_pic" json:"no_telp_pic" gorm:"type:varchar(15);column:no_telp_pic"`
 	IsActive     bool                  `form:"is_active" json:"is_active" gorm:"column:is_active;default:true"`
 	MerchantId   string                `form:"merchant_id" json:"merchant_id" gorm:"column:merchant_id;"`
-	Merchant     merchant.Merchant     `form:"merchant" json:"merchant" gorm:"->;references:ID;foreignKey:MerchantId"`
+	Merchant     entity.Merchant       `form:"merchant" json:"merchant" gorm:"->;references:ID;foreignKey:MerchantId"`
 	MediaPromosi []entity.MediaPromosi `json:"media_promosi" gorm:"many2many:outlet_media_promosi;"`
 	CreatedBy    string                `form:"created_by" json:"created_by" gorm:"column:created_by"`
 	UpdatedBy    string                `form:"updated_by" json:"updated_by" gorm:"column:updated_by"`
