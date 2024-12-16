@@ -28,7 +28,7 @@ func NewOutletRepository(conn *gorm.DB) OutletRepository {
 
 func (lR *outletRepository) DetailOutlet(id string) Outlet {
 	outlet := Outlet{ID: id}
-	lR.conn.Preload("MediaPromosi").Find(&outlet)
+	lR.conn.Preload("MediaPromosi").Preload("Merchant").Preload("Merchant.Kategori").Find(&outlet)
 	return outlet
 }
 
@@ -75,6 +75,6 @@ func (lR *outletRepository) MasterData(search string, limit int, pageParams int)
 func (lR *outletRepository) MasterDataCount(search string) int64 {
 	var outlet []Outlet
 	query := lR.conn.Where("nama like ? or alamat like  ? ", "%"+search+"%", "%"+search+"%")
-	query.Select("no_mtr").Find(&outlet)
+	query.Select("id").Find(&outlet)
 	return int64(len(outlet))
 }

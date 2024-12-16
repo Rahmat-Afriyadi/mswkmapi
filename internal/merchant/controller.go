@@ -21,6 +21,7 @@ func RegisterRoutes(app *fiber.App, db *gorm.DB) {
 	routes.Get("/master-data/filter", handler.MasterData)
 	routes.Get("/master-data/all", middleware.DeserializeUser, handler.MasterDataAll)
 	routes.Get("/detail/:id", middleware.DeserializeUser, handler.DetailMerchant)
+	routes.Get("/detail/free/:id", handler.DetailMerchant)
 	routes.Post("/create-merchant", middleware.DeserializeUser, handler.CreateMerchant)
 	routes.Post("/update-merchant", middleware.DeserializeUser, handler.UpdateMerchant)
 }

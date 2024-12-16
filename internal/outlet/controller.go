@@ -19,6 +19,7 @@ func RegisterRoutes(app *fiber.App, db *gorm.DB) {
 	routes.Get("/master-data", middleware.DeserializeUser, handler.MasterData)
 	routes.Get("/master-data/count", middleware.DeserializeUser, handler.MasterDataCount)
 	routes.Get("/detail/:id", middleware.DeserializeUser, handler.DetailOutlet)
+	routes.Get("/detail/free/:id", handler.DetailOutlet)
 	routes.Post("/create-outlet", middleware.DeserializeUser, handler.CreateOutlet)
 	routes.Post("/update-outlet", middleware.DeserializeUser, handler.UpdateOutlet)
 }
