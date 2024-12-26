@@ -29,6 +29,7 @@ func NewOutletRepository(conn *gorm.DB) OutletRepository {
 func (lR *outletRepository) DetailOutlet(id string) Outlet {
 	outlet := Outlet{ID: id}
 	lR.conn.Preload("MediaPromosi").Preload("Merchant").Preload("Merchant.Kategori").Find(&outlet)
+	fmt.Println("ini outlet yaa ", outlet)
 	return outlet
 }
 

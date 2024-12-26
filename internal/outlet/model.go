@@ -12,6 +12,10 @@ type Outlet struct {
 	ID           string                `form:"id" json:"id" gorm:"type:varchar(36);primary_key;column:id"`
 	Nama         string                `form:"nama" json:"nama" gorm:"type:varchar(100);column:nama"`
 	Alamat       string                `form:"alamat" json:"alamat" gorm:"column:alamat"`
+	Kota         string                `form:"kota" json:"kota" gorm:"column:kota"`
+	Kecamatan    string                `form:"kecamatan" json:"kecamatan" gorm:"column:kecamatan"`
+	Kelurahan    string                `form:"kelurahan" json:"kelurahan" gorm:"column:kelurahan"`
+	Kodepos      string                `form:"kodepos" json:"kodepos" gorm:"column:kodepos"`
 	Latitude     string                `form:"latitude" json:"latitude" gorm:"column:latitude;type:decimal(18,15)"`
 	Longitude    string                `form:"longitude" json:"longitude" gorm:"column:longitude;type:decimal(18,15)"`
 	NamaPIC      string                `form:"nama_pic" json:"nama_pic" gorm:"type:varchar(100);column:nama_pic"`

@@ -3,6 +3,7 @@ package merchant
 import (
 	"errors"
 	"fmt"
+	"strings"
 	"wkm/utils"
 
 	"gorm.io/gorm"
@@ -10,10 +11,11 @@ import (
 
 type MerchantRepository interface {
 	CreateMerchant(data Merchant) error
-	MasterData(search string, kategori string, limit int, pageParams int) []Merchant
-	MasterDataCount(search string) int64
+	MasterData(search string, kategori string, lokasi string, limit int, pageParams int) []Merchant
+	MasterDataSearch(search string) []Merchant
+	MasterDataCount(search string, kategori string, lokasi string) int64
 	MasterDataAll() []Merchant
-	DetailMerchant(id string) Merchant
+	DetailMerchant(id string, lokasi string) Merchant
 	Update(body Merchant) error
 }
 
@@ -27,9 +29,15 @@ func NewMerchantRepository(conn *gorm.DB) MerchantRepository {
 	}
 }
 
-func (lR *merchantRepository) DetailMerchant(id string) Merchant {
+func (lR *merchantRepository) DetailMerchant(id string, lokasi string) Merchant {
 	merchant := Merchant{ID: id}
-	lR.conn.Preload("Kategori").Preload("MediaPromosi").Preload("NamaPICMRO").Preload("Outlet").Find(&merchant)
+	query := lR.conn.Preload("Kategori").Preload("MediaPromosi").Preload("NamaPICMRO")
+	if lokasi != "" {
+		query.Preload("Outlet", "kota in ?", strings.Split(lokasi, "w3"))
+	} else {
+		query.Preload("Outlet")
+	}
+	query.Find(&merchant)
 	return merchant
 }
 
@@ -88,22 +96,48 @@ func (lR *merchantRepository) Update(data Merchant) error {
 	return nil
 }
 
-func (lR *merchantRepository) MasterData(search string, kategori string, limit int, pageParams int) []Merchant {
+func (lR *merchantRepository) MasterData(search string, kategori string, lokasi string, limit int, pageParams int) []Merchant {
 	merchant := []Merchant{}
-	query := lR.conn.Debug().Where("merchants.nama like ? or merchants.alamat like  ? ", "%"+search+"%", "%"+search+"%")
-	if kategori != "All" && kategori != "" {
+	query := lR.conn.Debug().Select("DISTINCT merchants.id, merchants.nama, merchants.logo, merchants.is_active, merchants.nama_pic, merchants.no_telp_pic, merchants.website, merchants.email").Where("merchants.nama like ? or merchants.alamat like  ? ", "%"+search+"%", "%"+search+"%")
+	if kategori != "" {
 		query.Joins("JOIN merchant_kategoris a ON a.MerchantID = merchants.id").
 			Joins("JOIN mst_kategori b ON a.KategoriID = b.id").
-			Where("b.nama = ?", kategori)
+			Where("b.nama in ?", strings.Split(kategori, "w3"))
+	}
+	if lokasi != "" {
+		query.Joins("JOIN outlets c ON c.merchant_id = merchants.id").
+			Where("c.kota in ?", strings.Split(lokasi, "w3"))
 	}
 	query.Scopes(utils.Paginate(&utils.PaginateParams{PageParams: pageParams, Limit: limit})).Find(&merchant)
 	return merchant
 }
 
-func (lR *merchantRepository) MasterDataCount(search string) int64 {
+func (lR *merchantRepository) MasterDataSearch(search string) []Merchant {
+	merchant := []Merchant{}
+	query := lR.conn.Debug().Select("DISTINCT merchants.id, merchants.nama")
+	if search != "" {
+		query.Joins("JOIN merchant_kategoris a ON a.MerchantID = merchants.id").
+			Joins("JOIN mst_kategori b ON a.KategoriID = b.id").
+			Joins("JOIN outlets c ON c.merchant_id = merchants.id").
+			Where("merchants.nama like ? or merchants.alamat like ? or b.nama like ? or c.kota like ?", "%"+search+"%", "%"+search+"%", "%"+search+"%", "%"+search+"%")
+	}
+	query.Limit(3).Find(&merchant)
+	return merchant
+}
+
+func (lR *merchantRepository) MasterDataCount(search string, kategori string, lokasi string) int64 {
 	var merchant []Merchant
 	query := lR.conn.Where("nama like ? or alamat like  ? ", "%"+search+"%", "%"+search+"%")
-	query.Select("id").Find(&merchant)
+	if kategori != "" {
+		query.Joins("JOIN merchant_kategoris a ON a.MerchantID = merchants.id").
+			Joins("JOIN mst_kategori b ON a.KategoriID = b.id").
+			Where("b.nama in ?", strings.Split(kategori, "w3"))
+	}
+	if lokasi != "" {
+		query.Joins("JOIN outlets c ON c.merchant_id = merchants.id").
+			Where("c.kota in ?", strings.Split(lokasi, "w3"))
+	}
+	query.Select("DISTINCT merchants.id").Find(&merchant)
 	return int64(len(merchant))
 }
 
