@@ -112,16 +112,15 @@ func (aC *authController) CheckOtpReset(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(map[string]interface{}{"message": err.Error()})
 	}
-
 	return c.JSON(map[string]interface{}{"otp": otp, "status": true})
 }
 
 func (aC *authController) SignInUser(c *fiber.Ctx) error {
 	var payload request.SigninRequest
-
 	if err := c.BodyParser(&payload); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "fail", "message": err.Error()})
 	}
+	fmt.Println("ini payload ", payload)
 
 	errors := utils.ValidateStruct(payload)
 	if errors != nil {
@@ -135,9 +134,11 @@ func (aC *authController) SignInUser(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"status": "fail", "message": err})
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(payload.Password))
-	if err != nil {
-		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{"status": "fail", "message": message})
+	if payload.AutoLogin == "false" {
+		err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(payload.Password))
+		if err != nil {
+			return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{"status": "fail", "message": message})
+		}
 	}
 
 	if !user.Active {

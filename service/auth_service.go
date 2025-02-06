@@ -66,6 +66,7 @@ func (s *authService) ConsumeFonnte(body request.OtpCheck) (map[string]interface
 	if err != nil {
 		return map[string]interface{}{}, err
 	}
+
 	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	request.Header.Set("Authorization", "k!ph_r+apphR8kJY@+gS")
 	response, err := client.Do(request)
