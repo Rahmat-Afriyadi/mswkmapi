@@ -9,6 +9,7 @@ import (
 type MemberService interface {
 	Mine(userId string) ([]entity.Member, error)
 	AddCard(kode request.AddMemberCard) (entity.Member, error)
+	CreateNewMemberCard(member request.CreateNewMember) (entity.Member, error)
 }
 
 type memberService struct {
@@ -27,4 +28,7 @@ func (s *memberService) Mine(userId string) ([]entity.Member, error) {
 
 func (s *memberService) AddCard(data request.AddMemberCard) (entity.Member, error) {
 	return s.mR.AddCard(data)
+}
+func (s *memberService) CreateNewMemberCard(data request.CreateNewMember) (entity.Member, error) {
+	return s.mR.CreateNewMemberCard(data)
 }

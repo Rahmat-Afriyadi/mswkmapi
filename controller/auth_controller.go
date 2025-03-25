@@ -186,6 +186,8 @@ func (aC *authController) SignInUser(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": "success", "access_token": accessTokenDetails.Token, "name": user.Name, "refresh_token": refreshTokenDetails.Token, "is_admin": user.IsAdmin, "email": user.Email})
 }
 
+
+
 func (aC *authController) RefreshAccessToken(c *fiber.Ctx) error {
 	message := "could not refresh access token"
 	var body map[string]string

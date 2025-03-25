@@ -7,6 +7,7 @@ import (
 	"wkm/controller"
 	"wkm/internal/merchant"
 	"wkm/internal/outlet"
+	"wkm/internal/token"
 	"wkm/middleware"
 	"wkm/repository"
 	"wkm/service"
@@ -93,8 +94,11 @@ func main() {
 	member := app.Group("/member")
 	member.Get("/my-card", middleware.DeserializeUser, memberController.Mine)
 	member.Post("/add-card", middleware.DeserializeUser, memberController.AddCard)
+	member.Post("/create-new-member", middleware.AdminAccess, memberController.CreateNewMemberCard)
+
 
 	// admin
+	token.RegisterRoutes(app, connMain)
 	merchant.RegisterRoutes(app, connMain)
 	outlet.RegisterRoutes(app, connMain)
 

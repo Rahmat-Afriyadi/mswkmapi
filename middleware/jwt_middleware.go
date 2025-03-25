@@ -1,12 +1,14 @@
 package middleware
 
 import (
+	"os"
 	"strings"
 	"wkm/config"
 	"wkm/repository"
 	"wkm/utils"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/joho/godotenv"
 )
 
 func DeserializeUser(c *fiber.Ctx) error {
@@ -36,4 +38,20 @@ func DeserializeUser(c *fiber.Ctx) error {
 	c.Locals("user", user)
 
 	return c.Next()
+}
+
+func AdminAccess(c *fiber.Ctx) error {
+	errEnv := godotenv.Load()
+	if errEnv != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": "fail", "message": errEnv})
+
+	}
+	// dsn := os.Getenv("MS_WKM")
+	token := c.Get("Token")
+	if token ==  os.Getenv("TOKEN"){
+		return c.Next()
+	}else {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": "fail", "message": "Unauthorized"})
+	}
+
 }

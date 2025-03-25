@@ -5,3 +5,8 @@ type SigninRequest struct {
 	Password  string `json:"password"`
 	AutoLogin string `json:"auto_login"`
 }
+
+type SigninTokenRequest struct {
+	Username string `json:"username"`
+	Token    string `json:"token"`
+}
