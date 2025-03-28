@@ -15,11 +15,17 @@ func RegisterRoutes(app *fiber.App, db *gorm.DB) {
 	service := NewMerchantService(repo)
 	handler := NewMerchantController(service)
 
+	app.Use(func(ctx *fiber.Ctx) error {
+		ctx.Set("Access-Control-Allow-Origin", "*")
+		ctx.Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		return ctx.Next()
+	})
+
 	routes := app.Group("/merchants")
+	routes.Get("/master-data/filter", handler.MasterData)
 	routes.Get("/master-data", middleware.DeserializeUser, handler.MasterData)
 	routes.Get("/master-data/search", handler.MasterDataSearch)
 	routes.Get("/master-data/count", middleware.DeserializeUser, handler.MasterDataCount)
-	routes.Get("/master-data/filter", handler.MasterData)
 	routes.Get("/master-data/all", middleware.DeserializeUser, handler.MasterDataAll)
 	routes.Get("/detail/:id", middleware.DeserializeUser, handler.DetailMerchant)
 	routes.Get("/detail/free/:id", handler.DetailMerchant)

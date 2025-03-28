@@ -25,21 +25,3 @@ func (b *User) BeforeCreate(tx *gorm.DB) (err error) {
 	return
 }
 
-type Role struct {
-	ID   string `form:"id" json:"id" gorm:"primary_key;column:id"`
-	Name string `form:"name" json:"name" gorm:"column:name"`
-}
-
-func (Role) TableName() string {
-	return "mst_roles"
-}
-
-type Permission struct {
-	ID     string `form:"id" json:"id" gorm:"primary_key;column:id"`
-	Name   string `form:"name" json:"name" gorm:"column:name"`
-	RoleId string `form:"role_id" json:"role_id" gorm:"column:role_id"`
-}
-
-func (Permission) TableName() string {
-	return "mst_permissions"
-}

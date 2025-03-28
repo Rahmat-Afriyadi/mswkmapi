@@ -24,6 +24,7 @@ type AuthService interface {
 	ConsumeFonnte(body request.OtpCheck) (map[string]interface{}, error)
 	CheckOtp(r request.OtpCheck) error
 	CheckOtpReset(r request.OtpCheck) (entity.Otp, error)
+	SignInUserAdmin(r request.SigninRequest) (entity.UserS, error)
 }
 
 type authService struct {
@@ -50,6 +51,10 @@ func (s *authService) SignInUser(r request.SigninRequest) (entity.User, error) {
 		fmt.Println("fonnte res", data)
 	}
 	return user, nil
+}
+
+func (s *authService) SignInUserAdmin(r request.SigninRequest) (entity.UserS, error) {
+	return s.uR.FindByUsername(r.Username), nil
 }
 
 func (s *authService) ConsumeFonnte(body request.OtpCheck) (map[string]interface{}, error) {

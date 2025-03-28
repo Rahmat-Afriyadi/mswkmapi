@@ -21,6 +21,7 @@ import (
 
 var (
 	connMain, sqlConnMain = config.GetConnectionMain()
+	connMainUser, sqlConnMainUser = config.GetUserConnectionMain()
 
 	userRepository repository.UserRepository = repository.NewUserRepository(connMain)
 	otpRepository  repository.OtpRepository  = repository.NewOtpRepository(connMain)
@@ -71,6 +72,7 @@ func main() {
 
 	auth := app.Group("/auth")
 	auth.Post("/login", authController.SignInUser)
+	auth.Post("/login/admin", authController.SignInUserAdmin)
 	auth.Post("/signup", authController.SignUpUser)
 	auth.Post("/generate-new-otp", authController.GenerateNewOtp)
 	auth.Post("/check-otp", authController.CheckOtp)

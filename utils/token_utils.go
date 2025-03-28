@@ -15,13 +15,13 @@ type TokenDetails struct {
 	ExpiresIn *int64
 }
 
-func CreateToken(userid string, ttl time.Duration, privateKey string) (*TokenDetails, error) {
+func CreateToken(userid string, dayExpired int, privateKey string) (*TokenDetails, error) {
 	now := time.Now().UTC()
 	td := &TokenDetails{
 		ExpiresIn: new(int64),
 		Token:     new(string),
 	}
-	*td.ExpiresIn = now.Add(ttl).Unix()
+	*td.ExpiresIn = now.AddDate(0,0,dayExpired).Unix()
 	td.UserID = userid
 
 	decodedPrivateKey, err := base64.StdEncoding.DecodeString(privateKey)

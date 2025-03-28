@@ -13,6 +13,8 @@ type UserRepository interface {
 	FindByPhoneNumber(username string) entity.User
 	ResetPassword(data request.ResetPassword)
 	CreateUser(data request.SignupRequest) (entity.User, error)
+	FindByUsername(username string) entity.UserS
+	FindByIdAdmin(id string) entity.UserS
 }
 
 type userRepository struct {
@@ -28,12 +30,6 @@ func NewUserRepository(connUser *gorm.DB) UserRepository {
 func (lR *userRepository) FindById(id string) entity.User {
 	user := entity.User{ID: id}
 	lR.connUser.Find(&user)
-
-	// var permissions []entity.Permission
-	// lR.connUser.Where("role_id", user.RoleId).Find(&permissions)
-	// for _, v := range permissions {
-	// 	user.Permissions = append(user.Permissions, v.Name)
-	// }
 
 	return user
 }
@@ -58,6 +54,32 @@ func (lR *userRepository) CreateUser(data request.SignupRequest) (entity.User, e
 		return user, result.Error
 	}
 	return user, nil
+}
+
+func (lR *userRepository) FindByUsername(username string) entity.UserS {
+	var user entity.UserS
+	lR.connUser.Where("username", username).First(&user)
+
+	var permissions []entity.Permission
+	lR.connUser.Where("role_id", user.RoleId).Find(&permissions)
+	for _, v := range permissions {
+		user.Permissions = append(user.Permissions, v.Name)
+	}
+
+	return user
+}
+
+func (lR *userRepository) FindByIdAdmin(id string) entity.UserS {
+	var user entity.UserS
+	lR.connUser.Where("id", id).First(&user)
+
+	var permissions []entity.Permission
+	lR.connUser.Where("role_id", user.RoleId).Find(&permissions)
+	for _, v := range permissions {
+		user.Permissions = append(user.Permissions, v.Name)
+	}
+
+	return user
 }
 
 func (lR *userRepository) FindByPhoneNumber(username string) entity.User {
