@@ -98,7 +98,7 @@ func (lR *merchantRepository) Update(data Merchant) error {
 
 func (lR *merchantRepository) MasterData(search string, kategori string, lokasi string, limit int, pageParams int) []Merchant {
 	merchant := []Merchant{}
-	query := lR.conn.Debug().Select("DISTINCT merchants.id, merchants.nama, merchants.logo, merchants.is_active, merchants.nama_pic, merchants.no_telp_pic, merchants.website, merchants.email").Where("merchants.nama like ? or merchants.alamat like  ? ", "%"+search+"%", "%"+search+"%")
+	query := lR.conn.Select("DISTINCT merchants.id, merchants.nama, merchants.logo, merchants.is_active, merchants.nama_pic, merchants.no_telp_pic, merchants.website, merchants.email").Where("merchants.nama like ? or merchants.alamat like  ? ", "%"+search+"%", "%"+search+"%")
 	if kategori != "" {
 		query.Joins("JOIN merchant_kategoris a ON a.MerchantID = merchants.id").
 			Joins("JOIN mst_kategori b ON a.KategoriID = b.id").
@@ -114,7 +114,7 @@ func (lR *merchantRepository) MasterData(search string, kategori string, lokasi 
 
 func (lR *merchantRepository) MasterDataSearch(search string) []Merchant {
 	merchant := []Merchant{}
-	query := lR.conn.Debug().Select("DISTINCT merchants.id, merchants.nama")
+	query := lR.conn.Select("DISTINCT merchants.id, merchants.nama")
 	if search != "" {
 		query.Joins("JOIN merchant_kategoris a ON a.MerchantID = merchants.id").
 			Joins("JOIN mst_kategori b ON a.KategoriID = b.id").

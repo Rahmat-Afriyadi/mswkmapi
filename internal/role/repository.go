@@ -1,4 +1,4 @@
-package user
+package role
 
 import (
 	"errors"
@@ -11,6 +11,7 @@ import (
 
 type RoleRepository interface {
 	CreateRole(data entity.Role) error
+	MasterDataAll() []entity.Role
 	MasterData(search string, limit int, pageParams int) []entity.Role
 	MasterDataCount(search string) int64
 	DetailRole(id string) entity.Role
@@ -25,6 +26,12 @@ func NewRoleRepository(conn *gorm.DB) RoleRepository {
 	return &userRepository{
 		conn: conn,
 	}
+}
+
+func (lR *userRepository) MasterDataAll() []entity.Role {
+	var roles []entity.Role
+	lR.conn.Select("id, name").Find(&roles)
+	return roles
 }
 
 func (lR *userRepository) DetailRole(id string) entity.Role {

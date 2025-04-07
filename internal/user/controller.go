@@ -67,7 +67,7 @@ func (tr *userSController) UpdateUserS(ctx *fiber.Ctx) error {
 	}
 	user := ctx.Locals("user")
 	details, _ := user.(entity.User)
-	body.UpdatedBy = details.Name
+	body.UpdatedBy = &details.Name
 	err = tr.userSService.Update(body)
 	if err != nil {
 		return ctx.JSON(map[string]interface{}{"message": err.Error()})
@@ -82,7 +82,7 @@ func (tr *userSController) CreateUserS(ctx *fiber.Ctx) error {
 	}
 	user := ctx.Locals("user")
 	details, _ := user.(entity.User)
-	body.CreatedBy = details.Name
+	body.CreatedBy = &details.Name
 	err = tr.userSService.CreateUserS(body)
 	if err != nil {
 		return ctx.JSON(map[string]string{"message": err.Error()})

@@ -1,4 +1,4 @@
-package user
+package role
 
 import (
 	"fmt"
@@ -15,11 +15,13 @@ func RegisterRoutes(app *fiber.App, db *gorm.DB) {
 	service := NewRoleService(repo)
 	handler := NewRoleController(service)
 
-	routes := app.Group("/userses")
+	routes := app.Group("/roles")
 	routes.Get("/master-data", middleware.DeserializeUser, handler.MasterData)
 	routes.Get("/master-data/count", middleware.DeserializeUser, handler.MasterDataCount)
 	routes.Get("/detail/:id", handler.DetailRole)
 	routes.Get("/detail/free/:id", handler.DetailRole)
+	routes.Get("/master-data/all", middleware.DeserializeUser, handler.MasterDataAll)
+
 	routes.Post("/create-user", middleware.DeserializeUser, handler.CreateRole)
 	routes.Post("/update-user", middleware.DeserializeUser, handler.UpdateRole)
 }
@@ -27,6 +29,7 @@ func RegisterRoutes(app *fiber.App, db *gorm.DB) {
 type RoleController interface {
 	CreateRole(ctx *fiber.Ctx) error
 	UpdateRole(ctx *fiber.Ctx) error
+	MasterDataAll(ctx *fiber.Ctx) error
 	MasterData(ctx *fiber.Ctx) error
 	MasterDataCount(ctx *fiber.Ctx) error
 	DetailRole(ctx *fiber.Ctx) error
@@ -40,6 +43,10 @@ func NewRoleController(aS RoleService) RoleController {
 	return &roleController{
 		roleService: aS,
 	}
+}
+
+func (tr *roleController) MasterDataAll(ctx *fiber.Ctx) error {
+	return ctx.JSON(map[string]interface{}{"data": tr.roleService.MasterDataAll(), "status": "success"})
 }
 
 func (tr *roleController) DetailRole(ctx *fiber.Ctx) error {

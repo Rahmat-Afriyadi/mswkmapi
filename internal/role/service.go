@@ -1,4 +1,4 @@
-package user
+package role
 
 import "wkm/entity"
 
@@ -8,6 +8,7 @@ type RoleService interface {
 	MasterDataCount(search string) int64
 	DetailRole(id string) entity.Role
 	Update(body entity.Role) error
+	MasterDataAll() []entity.Role
 }
 
 type roleService struct {
@@ -20,6 +21,9 @@ func NewRoleService(tR RoleRepository) RoleService {
 	}
 }
 
+func (s *roleService) MasterDataAll() []entity.Role {
+	return s.trR.MasterDataAll()
+}
 func (s *roleService) Update(body entity.Role) error {
 	return s.trR.Update(body)
 }

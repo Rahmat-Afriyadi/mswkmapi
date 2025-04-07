@@ -59,8 +59,9 @@ func (lR *userRepository) Update(data entity.UserS) error {
 
 func (lR *userRepository) MasterData(search string, limit int, pageParams int) []entity.UserS {
 	user := []entity.UserS{}
-	query := lR.conn.Where("name like ? ", "%"+search+"%")
+	query := lR.conn.Preload("Role").Where("name like ? ", "%"+search+"%")
 	query.Scopes(utils.Paginate(&utils.PaginateParams{PageParams: pageParams, Limit: limit})).Find(&user)
+	fmt.Println(user[0].ID, user[0].Role.Name)
 	return user
 }
 

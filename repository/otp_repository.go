@@ -62,7 +62,7 @@ func (lR *otpRepository) Check(data request.OtpCheck) error {
 		return errors.New("kode OTP telah expired, silahkan generate ulang kode OTP")
 	}
 	user := entity.User{}
-	lR.connUser.Debug().Where("no_hp", otp.NoHp).First(&user)
+	lR.connUser.Where("no_hp", otp.NoHp).First(&user)
 	fmt.Println("ini otp yaa ", user)
 	if user.ID == "" {
 		return errors.New("kode OTP ini tidak cocok dengan nomor telepon anda!")

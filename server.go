@@ -7,7 +7,9 @@ import (
 	"wkm/controller"
 	"wkm/internal/merchant"
 	"wkm/internal/outlet"
+	"wkm/internal/role"
 	"wkm/internal/token"
+	"wkm/internal/user"
 	"wkm/middleware"
 	"wkm/repository"
 	"wkm/service"
@@ -66,8 +68,9 @@ func main() {
 	}))
 
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "https://gofiber.io, http://localhost:3002, http://192.168.70.17:3002, https://www.e-cardplus.co.id",
-		AllowHeaders: "Access-Control-Allow-Headers, Origin, Content-Type, Accept, Authorization, Access-Control-Allow-Origin",
+		AllowOrigins: "http://localhost:3002, http://192.168.70.17:3002, https://www.e-cardplus.co.id",
+		AllowHeaders: "Origin, Content-Type, Accept, Authorization",
+		AllowMethods: "GET, POST, PUT, DELETE, OPTIONS",
 	}))
 
 	auth := app.Group("/auth")
@@ -100,6 +103,8 @@ func main() {
 
 
 	// admin
+	user.RegisterRoutes(app, connMain)
+	role.RegisterRoutes(app, connMain)
 	token.RegisterRoutes(app, connMain)
 	merchant.RegisterRoutes(app, connMain)
 	outlet.RegisterRoutes(app, connMain)
