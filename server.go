@@ -5,8 +5,11 @@ import (
 	"os"
 	"wkm/config"
 	"wkm/controller"
+	"wkm/internal/kategori"
+	mediaPromosi "wkm/internal/media_promosi"
 	"wkm/internal/merchant"
 	"wkm/internal/outlet"
+	picMro "wkm/internal/pic_mro"
 	"wkm/internal/role"
 	"wkm/internal/token"
 	"wkm/internal/user"
@@ -23,7 +26,6 @@ import (
 
 var (
 	connMain, sqlConnMain = config.GetConnectionMain()
-	connMainUser, sqlConnMainUser = config.GetUserConnectionMain()
 
 	userRepository repository.UserRepository = repository.NewUserRepository(connMain)
 	otpRepository  repository.OtpRepository  = repository.NewOtpRepository(connMain)
@@ -68,7 +70,7 @@ func main() {
 	}))
 
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://localhost:3002, http://192.168.70.17:3002, https://www.e-cardplus.co.id",
+		AllowOrigins: "http://localhost:3002, http://192.168.70.17:3002, https://e-cardplus.co.id, https://green-m.xyz",
 		AllowHeaders: "Origin, Content-Type, Accept, Authorization",
 		AllowMethods: "GET, POST, PUT, DELETE, OPTIONS",
 	}))
@@ -95,6 +97,7 @@ func main() {
 	masterData.Get("/kategori-merchant", middleware.DeserializeUser, masterDataController.KategoriMerchantAll)
 	masterData.Get("/media-promosi", middleware.DeserializeUser, masterDataController.MediaPromosiAll)
 	masterData.Get("/pic-mro", middleware.DeserializeUser, masterDataController.PicMroAll)
+	masterData.Get("/kodepos", middleware.DeserializeUser, masterDataController.KodeposAll)
 
 	member := app.Group("/member")
 	member.Get("/my-card", middleware.DeserializeUser, memberController.Mine)
@@ -108,6 +111,9 @@ func main() {
 	token.RegisterRoutes(app, connMain)
 	merchant.RegisterRoutes(app, connMain)
 	outlet.RegisterRoutes(app, connMain)
+	kategori.RegisterRoutes(app, connMain)
+	mediaPromosi.RegisterRoutes(app, connMain)
+	picMro.RegisterRoutes(app, connMain)
 
 	app.Listen(":" + os.Getenv("PORT"))
 

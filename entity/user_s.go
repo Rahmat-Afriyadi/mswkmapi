@@ -3,7 +3,7 @@ package entity
 import "time"
 
 type UserS struct {
-	ID          string     `form:"id" json:"id" gorm:"type:uuid;primary_key;column:id"`
+	ID          uint64     `form:"id" json:"id" gorm:"type:uuid;primary_key;column:id"`
 	Username    string     `form:"username" json:"username" gorm:"column:username"`
 	Name        string     `form:"name" json:"name" gorm:"column:name"`
 	Password    string     `form:"password" json:"password" gorm:"column:password2"`
@@ -21,8 +21,9 @@ func (UserS) TableName() string {
 }
 
 type Role struct {
-	ID   string `form:"id" json:"id" gorm:"primary_key;column:id"`
+	ID   uint64 `form:"id" json:"id" gorm:"primary_key;column:id"`
 	Name string `form:"name" json:"name" gorm:"column:name"`
+	Permissions []Permission `json:"permissions" gorm:"foreignKey:RoleId;references:ID"`
 }
 
 func (Role) TableName() string {
@@ -30,9 +31,9 @@ func (Role) TableName() string {
 }
 
 type Permission struct {
-	ID     string `form:"id" json:"id" gorm:"primary_key;column:id"`
+	ID     uint64 `form:"id" json:"id" gorm:"primary_key;column:id"`
 	Name   string `form:"name" json:"name" gorm:"column:name"`
-	RoleId string `form:"role_id" json:"role_id" gorm:"column:role_id"`
+	RoleId uint64 `form:"role_id" json:"role_id" gorm:"column:role_id"`
 }
 
 func (Permission) TableName() string {

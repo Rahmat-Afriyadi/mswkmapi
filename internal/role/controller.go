@@ -22,8 +22,10 @@ func RegisterRoutes(app *fiber.App, db *gorm.DB) {
 	routes.Get("/detail/free/:id", handler.DetailRole)
 	routes.Get("/master-data/all", middleware.DeserializeUser, handler.MasterDataAll)
 
-	routes.Post("/create-user", middleware.DeserializeUser, handler.CreateRole)
-	routes.Post("/update-user", middleware.DeserializeUser, handler.UpdateRole)
+	
+	routes.Delete("/delete/:id", middleware.DeserializeUserAdmin, handler.DeleteRole)
+	routes.Post("/create-role", middleware.DeserializeUserAdmin, handler.CreateRole)
+	routes.Post("/update-role", middleware.DeserializeUserAdmin, handler.UpdateRole)
 }
 
 type RoleController interface {
@@ -33,6 +35,7 @@ type RoleController interface {
 	MasterData(ctx *fiber.Ctx) error
 	MasterDataCount(ctx *fiber.Ctx) error
 	DetailRole(ctx *fiber.Ctx) error
+	DeleteRole(ctx *fiber.Ctx) error
 }
 
 type roleController struct {
@@ -49,9 +52,21 @@ func (tr *roleController) MasterDataAll(ctx *fiber.Ctx) error {
 	return ctx.JSON(map[string]interface{}{"data": tr.roleService.MasterDataAll(), "status": "success"})
 }
 
+func (tr *roleController) DeleteRole(ctx *fiber.Ctx) error {
+	id := ctx.Params("id")
+	user := ctx.Locals("user")
+	details, _ := user.(entity.UserS)
+	err := tr.roleService.Delete(id, details.Name)
+	if err != nil {
+		return ctx.JSON(map[string]interface{}{"message": err.Error()})
+	}
+	return ctx.JSON(map[string]string{"message": "Berhasil Update"})
+}
+
 func (tr *roleController) DetailRole(ctx *fiber.Ctx) error {
 	id := ctx.Params("id")
-	return ctx.JSON(tr.roleService.DetailRole(id))
+	strconvId, _ := strconv.Atoi(id)
+	return ctx.JSON(tr.roleService.DetailRole(uint64(strconvId)))
 }
 
 func (tr *roleController) MasterData(ctx *fiber.Ctx) error {

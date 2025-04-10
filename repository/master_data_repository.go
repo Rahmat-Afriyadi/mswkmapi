@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"fmt"
 	"wkm/entity"
 
 	"gorm.io/gorm"
@@ -10,6 +11,7 @@ type MasterDataRepository interface {
 	KategoriMerchantAll() ([]entity.Kategori, error)
 	MediaPromosiAll() ([]entity.MediaPromosi, error)
 	PicMroAll() ([]entity.PicMro, error)
+	KodeposAll() ([]entity.Kodepos, error)
 }
 
 type masterDataRepository struct {
@@ -22,6 +24,12 @@ func NewMasterDataRepository(connGorm *gorm.DB) MasterDataRepository {
 	}
 }
 
+func (s *masterDataRepository) KodeposAll() ([]entity.Kodepos, error) {
+	datas := []entity.Kodepos{}
+	s.connGorm.Find(&datas)
+	fmt.Println("keisni gk sih , datas", len(datas), datas[0])
+	return datas, nil
+}
 func (s *masterDataRepository) KategoriMerchantAll() ([]entity.Kategori, error) {
 	datas := []entity.Kategori{}
 	s.connGorm.Find(&datas)

@@ -6,9 +6,10 @@ type RoleService interface {
 	CreateRole(data entity.Role) error
 	MasterData(search string, limit int, pageParams int) []entity.Role
 	MasterDataCount(search string) int64
-	DetailRole(id string) entity.Role
+	DetailRole(id uint64) entity.Role
 	Update(body entity.Role) error
 	MasterDataAll() []entity.Role
+	Delete(id string, name string) error
 }
 
 type roleService struct {
@@ -27,7 +28,10 @@ func (s *roleService) MasterDataAll() []entity.Role {
 func (s *roleService) Update(body entity.Role) error {
 	return s.trR.Update(body)
 }
-func (s *roleService) DetailRole(id string) entity.Role {
+func (s *roleService) Delete(id string, name string) error {
+	return s.trR.Delete(id, name)
+}
+func (s *roleService) DetailRole(id uint64) entity.Role {
 	return s.trR.DetailRole(id)
 }
 func (s *roleService) MasterData(search string, limit int, pageParams int) []entity.Role {

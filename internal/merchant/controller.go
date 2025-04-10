@@ -28,14 +28,16 @@ func RegisterRoutes(app *fiber.App, db *gorm.DB) {
 	routes.Get("/master-data/count", middleware.DeserializeUser, handler.MasterDataCount)
 	routes.Get("/master-data/all", middleware.DeserializeUser, handler.MasterDataAll)
 	routes.Get("/detail/:id", middleware.DeserializeUser, handler.DetailMerchant)
+	routes.Delete("/delete/:id", middleware.DeserializeUserAdmin, handler.DeleteMerchant)
 	routes.Get("/detail/free/:id", handler.DetailMerchant)
-	routes.Post("/create-merchant", middleware.DeserializeUser, handler.CreateMerchant)
-	routes.Post("/update-merchant", middleware.DeserializeUser, handler.UpdateMerchant)
+	routes.Post("/create-merchant", middleware.DeserializeUserAdmin, handler.CreateMerchant)
+	routes.Post("/update-merchant", middleware.DeserializeUserAdmin, handler.UpdateMerchant)
 }
 
 type MerchantController interface {
 	CreateMerchant(ctx *fiber.Ctx) error
 	UpdateMerchant(ctx *fiber.Ctx) error
+	DeleteMerchant(ctx *fiber.Ctx) error
 	MasterData(ctx *fiber.Ctx) error
 	MasterDataSearch(ctx *fiber.Ctx) error
 	MasterDataCount(ctx *fiber.Ctx) error
@@ -90,9 +92,20 @@ func (tr *mstMtrController) UpdateMerchant(ctx *fiber.Ctx) error {
 		fmt.Println("error body parser ", err)
 	}
 	user := ctx.Locals("user")
-	details, _ := user.(entity.User)
+	details, _ := user.(entity.UserS)
 	body.UpdatedBy = details.Name
 	err = tr.mstMtrService.Update(body)
+	if err != nil {
+		return ctx.JSON(map[string]interface{}{"message": err.Error()})
+	}
+	return ctx.JSON(map[string]string{"message": "Berhasil Update"})
+}
+
+func (tr *mstMtrController) DeleteMerchant(ctx *fiber.Ctx) error {
+	id := ctx.Params("id")
+	user := ctx.Locals("user")
+	details, _ := user.(entity.UserS)
+	err := tr.mstMtrService.Delete(id, details.Name)
 	if err != nil {
 		return ctx.JSON(map[string]interface{}{"message": err.Error()})
 	}
@@ -105,7 +118,7 @@ func (tr *mstMtrController) CreateMerchant(ctx *fiber.Ctx) error {
 		fmt.Println("error body parser ", err)
 	}
 	user := ctx.Locals("user")
-	details, _ := user.(entity.User)
+	details, _ := user.(entity.UserS)
 	body.CreatedBy = details.Name
 	err = tr.mstMtrService.CreateMerchant(body)
 	if err != nil {

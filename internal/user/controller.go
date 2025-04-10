@@ -44,7 +44,8 @@ func NewUserSController(aS UserSService) UserSController {
 
 func (tr *userSController) DetailUserS(ctx *fiber.Ctx) error {
 	id := ctx.Params("id")
-	return ctx.JSON(tr.userSService.DetailUserS(id))
+	strconvId, _ := strconv.Atoi(id)
+	return ctx.JSON(tr.userSService.DetailUserS(uint64(strconvId)))
 }
 
 func (tr *userSController) MasterData(ctx *fiber.Ctx) error {

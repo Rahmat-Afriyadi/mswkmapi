@@ -16,6 +16,7 @@ type MerchantRepository interface {
 	MasterDataCount(search string, kategori string, lokasi string) int64
 	MasterDataAll() []Merchant
 	DetailMerchant(id string, lokasi string) Merchant
+	Delete(id string, name string) error
 	Update(body Merchant) error
 }
 
@@ -66,6 +67,16 @@ func (lR *merchantRepository) CreateMerchant(data Merchant) error {
 
 }
 
+func (lR *merchantRepository) Delete(id string, name string) error {
+	result := lR.conn.Model(&Merchant{}).Where("id = ?", id).Updates(map[string]interface{}{
+        "is_deleted": true,
+        "updated_by": name, // kalau kamu mau set waktu update juga
+    })
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
 func (lR *merchantRepository) Update(data Merchant) error {
 	record := Merchant{ID: data.ID}
 	lR.conn.First(&record)
@@ -98,7 +109,7 @@ func (lR *merchantRepository) Update(data Merchant) error {
 
 func (lR *merchantRepository) MasterData(search string, kategori string, lokasi string, limit int, pageParams int) []Merchant {
 	merchant := []Merchant{}
-	query := lR.conn.Select("DISTINCT merchants.id, merchants.nama, merchants.logo, merchants.is_active, merchants.nama_pic, merchants.no_telp_pic, merchants.website, merchants.email").Where("merchants.nama like ? or merchants.alamat like  ? ", "%"+search+"%", "%"+search+"%")
+	query := lR.conn.Select("DISTINCT merchants.id, merchants.nama, merchants.logo, merchants.is_active, merchants.nama_pic, merchants.no_telp_pic, merchants.website, merchants.email, merchants.pin,merchants.updated_at").Where("merchants.nama like ? or merchants.alamat like  ? ", "%"+search+"%", "%"+search+"%").Where("is_deleted = 0")
 	if kategori != "" {
 		query.Joins("JOIN merchant_kategoris a ON a.MerchantID = merchants.id").
 			Joins("JOIN mst_kategori b ON a.KategoriID = b.id").
@@ -108,13 +119,13 @@ func (lR *merchantRepository) MasterData(search string, kategori string, lokasi 
 		query.Joins("JOIN outlets c ON c.merchant_id = merchants.id").
 			Where("c.kota in ?", strings.Split(lokasi, "w3"))
 	}
-	query.Scopes(utils.Paginate(&utils.PaginateParams{PageParams: pageParams, Limit: limit})).Find(&merchant)
+	query.Scopes(utils.Paginate(&utils.PaginateParams{PageParams: pageParams, Limit: limit})).Order("merchants.pin desc,merchants.updated_at desc").Find(&merchant)
 	return merchant
 }
 
 func (lR *merchantRepository) MasterDataSearch(search string) []Merchant {
 	merchant := []Merchant{}
-	query := lR.conn.Select("DISTINCT merchants.id, merchants.nama")
+	query := lR.conn.Select("DISTINCT merchants.id, merchants.nama").Where("merchants.is_deleted = 0")
 	if search != "" {
 		query.Joins("JOIN merchant_kategoris a ON a.MerchantID = merchants.id").
 			Joins("JOIN mst_kategori b ON a.KategoriID = b.id").
@@ -127,7 +138,7 @@ func (lR *merchantRepository) MasterDataSearch(search string) []Merchant {
 
 func (lR *merchantRepository) MasterDataCount(search string, kategori string, lokasi string) int64 {
 	var merchant []Merchant
-	query := lR.conn.Where("nama like ? or alamat like  ? ", "%"+search+"%", "%"+search+"%")
+	query := lR.conn.Where("nama like ? or alamat like  ? ", "%"+search+"%", "%"+search+"%").Where("is_deleted = 0")
 	if kategori != "" {
 		query.Joins("JOIN merchant_kategoris a ON a.MerchantID = merchants.id").
 			Joins("JOIN mst_kategori b ON a.KategoriID = b.id").
@@ -143,6 +154,6 @@ func (lR *merchantRepository) MasterDataCount(search string, kategori string, lo
 
 func (lR *merchantRepository) MasterDataAll() []Merchant {
 	var merchant []Merchant
-	lR.conn.Select("id, nama").Find(&merchant)
+	lR.conn.Select("id, nama").Where("is_deleted = 0").Find(&merchant)
 	return merchant
 }

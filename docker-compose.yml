@@ -18,62 +18,43 @@ services:
   #     - mswkm
 
   mswkm-app:
-    image: rahmatafriayadi/mswkm-app:1.0.0
+    image: rahmatafriayadi/mswkm-app:1.2.5
     container_name: mswkm-app
     ports:
       - "3002:3002"
     environment:
       - PORT=3002
       - NEXT_PUBLIC_SECRET=adfavdmpi2312aiond
-      - URL=http://localhost:3002
-      - NEXT_PUBLIC_URL=http://localhost:3002
-      - NEXT_PUBLIC_BASE_API=http://mswkm:3003
-      - NEXTAUTH_URL=http://localhost:3002/api/auth
+      - URL=http://localhost:3002/
+      - NEXT_PUBLIC_URL=http://localhost:3002/
+      - NEXT_PUBLIC_BASE_API=https://green-m.xyz//backend
+      - NEXTAUTH_URL=http://localhost:3002//api/auth
     restart: unless-stopped # Tambahkan agar restart otomatis jika error
-    networks:
-      - my_network
-    depends_on:
-      - mswkm
+    # networks:
+    #   - my_network
+    # depends_on:
+    #   - mswkm
+#   mswkm:
+#     image: rahmatafriayadi/mswkm:3.0.0
+#     container_name: mswkm
+#     ports:
+#       - "3003:3003"
+#     environment:
+#       - PORT=3003
+#       - DB_USER=first2
+#       - DB_PASS=Mgreen03663 # Pastikan tetap dalam tanda kutip jika kosong
+#       - DB_HOST=host.docker.internal # Ubah agar lebih kompatibel di Windows/Linux
+#       - DB_PORT=3306
+#       - DB_NAME=ms_wkm
+#       - TOKEN=ADFASDLFJASDFKJASDLFKJ
+#     volumes:
+#       - /home/mswkm/uploads:/uploads
+#     extra_hosts:
+#       - "host.docker.internal:host-gateway"
+#     restart: unless-stopped # Tambahkan agar restart otomatis jika error
+#     networks:
+#       - my_network
 
-  mswkm:
-    image: rahmatafriayadi/mswkm:1.1.0
-    container_name: mswkm
-    ports:
-      - "3003:3003"
-    environment:
-      - PORT=3003
-
-      - DB_USER=root
-      - DB_PASS= # Pastikan tetap dalam tanda kutip jika kosong
-      - DB_HOST=host.docker.internal # Ubah agar lebih kompatibel di Windows/Linux
-      - DB_PORT=3306
-      - DB_NAME=ms_wkm
-
-      - DB_USER_USER=root
-      - DB_USER_PASS= # Pastikan tetap dalam tanda kutip jika kosong
-      - DB_USER_HOST=host.docker.internal # Ubah agar lebih kompatibel di Windows/Linux
-      - DB_USER_PORT=3306
-      - DB_USER_NAME=users
-
-      - TOKEN=ADFASDLFJASDFKJASDLFKJ
-
-    #   - TOKEN=ADFASDLFJASDFKJASDLFKJ
-    # environment:
-    #   - PORT=3003
-    #   - DB_USER=first2
-    #   - DB_PASS=Mgreen03663 # Pastikan tetap dalam tanda kutip jika kosong
-    #   - DB_HOST=host.docker.internal # Ubah agar lebih kompatibel di Windows/Linux
-    #   - DB_PORT=3306
-    #   - DB_NAME=ms_wkm
-    #   - TOKEN=ADFASDLFJASDFKJASDLFKJ
-    # volumes:
-    #   - /home/mswkm/uploads:/uploads
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    restart: unless-stopped # Tambahkan agar restart otomatis jika error
-    networks:
-      - my_network
-
-networks:
-  my_network: # Definisikan jaringan agar lebih terisolasi
-    driver: bridge
+# networks:
+#   my_network: # Definisikan jaringan agar lebih terisolasi
+#     driver: bridge

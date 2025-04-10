@@ -20,6 +20,8 @@ func RegisterRoutes(app *fiber.App, db *gorm.DB) {
 	routes.Get("/master-data/count", middleware.DeserializeUser, handler.MasterDataCount)
 	routes.Get("/detail/:id", handler.DetailOutlet)
 	routes.Get("/detail/free/:id", handler.DetailOutlet)
+	
+	routes.Delete("/delete/:id", middleware.DeserializeUserAdmin, handler.DeleteOutlet)
 	routes.Post("/create-outlet", middleware.DeserializeUser, handler.CreateOutlet)
 	routes.Post("/update-outlet", middleware.DeserializeUser, handler.UpdateOutlet)
 }
@@ -30,6 +32,7 @@ type OutletController interface {
 	MasterData(ctx *fiber.Ctx) error
 	MasterDataCount(ctx *fiber.Ctx) error
 	DetailOutlet(ctx *fiber.Ctx) error
+	DeleteOutlet(ctx *fiber.Ctx) error
 }
 
 type mstMtrController struct {
@@ -58,6 +61,16 @@ func (tr *mstMtrController) MasterDataCount(ctx *fiber.Ctx) error {
 	search := ctx.Query("search")
 	return ctx.JSON(tr.mstMtrService.MasterDataCount(search))
 }
+func (tr *mstMtrController) DeleteOutlet(ctx *fiber.Ctx) error {
+	id := ctx.Params("id")
+	user := ctx.Locals("user")
+	details, _ := user.(entity.UserS)
+	err := tr.mstMtrService.Delete(id, details.Name)
+	if err != nil {
+		return ctx.JSON(map[string]interface{}{"message": err.Error()})
+	}
+	return ctx.JSON(map[string]string{"message": "Berhasil Update"})
+}
 
 func (tr *mstMtrController) UpdateOutlet(ctx *fiber.Ctx) error {
 	var body Outlet
@@ -66,7 +79,7 @@ func (tr *mstMtrController) UpdateOutlet(ctx *fiber.Ctx) error {
 		fmt.Println("error body parser ", err)
 	}
 	user := ctx.Locals("user")
-	details, _ := user.(entity.User)
+	details, _ := user.(entity.UserS)
 	body.UpdatedBy = details.Name
 	err = tr.mstMtrService.Update(body)
 	if err != nil {
@@ -81,7 +94,7 @@ func (tr *mstMtrController) CreateOutlet(ctx *fiber.Ctx) error {
 		fmt.Println("error body parser ", err)
 	}
 	user := ctx.Locals("user")
-	details, _ := user.(entity.User)
+	details, _ := user.(entity.UserS)
 	body.CreatedBy = details.Name
 	err = tr.mstMtrService.CreateOutlet(body)
 	if err != nil {

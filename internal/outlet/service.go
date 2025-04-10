@@ -6,6 +6,7 @@ type OutletService interface {
 	MasterDataCount(search string) int64
 	DetailOutlet(id string) Outlet
 	Update(body Outlet) error
+	Delete(id string, name string) error
 }
 
 type mstMtrService struct {
@@ -20,6 +21,9 @@ func NewOutletService(tR OutletRepository) OutletService {
 
 func (s *mstMtrService) Update(body Outlet) error {
 	return s.trR.Update(body)
+}
+func (s *mstMtrService) Delete(id string, name string) error {
+	return s.trR.Delete(id, name)
 }
 func (s *mstMtrService) DetailOutlet(id string) Outlet {
 	return s.trR.DetailOutlet(id)

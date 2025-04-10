@@ -10,6 +10,7 @@ type MasterDataController interface {
 	KategoriMerchantAll(ctx *fiber.Ctx) error
 	MediaPromosiAll(ctx *fiber.Ctx) error
 	PicMroAll(ctx *fiber.Ctx) error
+	KodeposAll(ctx *fiber.Ctx) error
 }
 
 type masterDataController struct {
@@ -24,6 +25,10 @@ func NewMasterDataController(mS service.MasterDataService) MasterDataController 
 
 func (c *masterDataController) KategoriMerchantAll(ctx *fiber.Ctx) error {
 	data, _ := c.mS.KategoriMerchantAll()
+	return ctx.JSON(map[string]interface{}{"data": data, "message": "Berhasil"})
+}
+func (c *masterDataController) KodeposAll(ctx *fiber.Ctx) error {
+	data, _ := c.mS.KodeposAll()
 	return ctx.JSON(map[string]interface{}{"data": data, "message": "Berhasil"})
 }
 func (c *masterDataController) MediaPromosiAll(ctx *fiber.Ctx) error {

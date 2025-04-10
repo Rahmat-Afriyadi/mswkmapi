@@ -9,6 +9,7 @@ type MasterDataService interface {
 	KategoriMerchantAll() ([]entity.Kategori, error)
 	MediaPromosiAll() ([]entity.MediaPromosi, error)
 	PicMroAll() ([]entity.PicMro, error)
+	KodeposAll() ([]entity.Kodepos, error)
 }
 
 type masterDataService struct {
@@ -21,6 +22,9 @@ func NewMasterDataService(mR repository.MasterDataRepository) MasterDataService 
 	}
 }
 
+func (s *masterDataService) KodeposAll() ([]entity.Kodepos, error) {
+	return s.mR.KodeposAll()
+}
 func (s *masterDataService) KategoriMerchantAll() ([]entity.Kategori, error) {
 	return s.mR.KategoriMerchantAll()
 }

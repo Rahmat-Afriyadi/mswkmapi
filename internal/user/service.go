@@ -6,8 +6,9 @@ type UserSService interface {
 	CreateUserS(data entity.UserS) error
 	MasterData(search string, limit int, pageParams int) []entity.UserS
 	MasterDataCount(search string) int64
-	DetailUserS(id string) entity.UserS
+	DetailUserS(id uint64) entity.UserS
 	Update(body entity.UserS) error
+	Delete(id string, name string) error
 }
 
 type userSService struct {
@@ -23,7 +24,10 @@ func NewUserSService(tR UserSRepository) UserSService {
 func (s *userSService) Update(body entity.UserS) error {
 	return s.trR.Update(body)
 }
-func (s *userSService) DetailUserS(id string) entity.UserS {
+func (s *userSService) Delete(id string, name string) error {
+	return s.trR.Delete(id, name)
+}
+func (s *userSService) DetailUserS(id uint64) entity.UserS {
 	return s.trR.DetailUserS(id)
 }
 func (s *userSService) MasterData(search string, limit int, pageParams int) []entity.UserS {

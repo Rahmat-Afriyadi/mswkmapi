@@ -7,6 +7,7 @@ type MerchantService interface {
 	MasterDataSearch(search string) []Merchant
 	MasterDataAll() []Merchant
 	DetailMerchant(id string, lokasi string) Merchant
+	Delete(id string, name string) error
 	Update(body Merchant) error
 }
 
@@ -22,6 +23,9 @@ func NewMerchantService(tR MerchantRepository) MerchantService {
 
 func (s *mstMtrService) Update(body Merchant) error {
 	return s.trR.Update(body)
+}
+func (s *mstMtrService) Delete(id string, name string) error {
+	return s.trR.Delete(id, name)
 }
 func (s *mstMtrService) DetailMerchant(id string, lokasi string) Merchant {
 	return s.trR.DetailMerchant(id, lokasi)

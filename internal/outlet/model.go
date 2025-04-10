@@ -21,6 +21,7 @@ type Outlet struct {
 	NamaPIC      string                `form:"nama_pic" json:"nama_pic" gorm:"type:varchar(100);column:nama_pic"`
 	NoTelpPIC    string                `form:"no_telp_pic" json:"no_telp_pic" gorm:"type:varchar(15);column:no_telp_pic"`
 	IsActive     bool                  `form:"is_active" json:"is_active" gorm:"column:is_active;default:true"`
+	IsDeleted     bool                  `form:"is_deleted" json:"is_deleted" gorm:"column:is_deleted;default:true"`
 	MerchantId   string                `form:"merchant_id" json:"merchant_id" gorm:"column:merchant_id;"`
 	Merchant     entity.Merchant       `form:"merchant" json:"merchant" gorm:"->;references:ID;foreignKey:MerchantId"`
 	MediaPromosi []entity.MediaPromosi `json:"media_promosi" gorm:"many2many:outlet_media_promosi;"`

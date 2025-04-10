@@ -52,7 +52,6 @@ func (aC *tokenController) SignInUserByToken(c *fiber.Ctx) error {
 	if err := c.BodyParser(&payload); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "fail", "message": err.Error()})
 	}
-	fmt.Println("ini payload ", payload)
 	errors := utils.ValidateStruct(payload)
 	if errors != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "fail", "errors": errors})
