@@ -31,7 +31,7 @@ func NewKategoriRepository(conn *gorm.DB) KategoriRepository {
 
 func (lR *kategoriRepository) MasterDataAll() []entity.Kategori {
 	var kategoris []entity.Kategori
-	lR.conn.Select("id, nama").Find(&kategoris)
+	lR.conn.Select("id, nama").Where("is_deleted = 0").Find(&kategoris)
 	return kategoris
 }
 
@@ -61,8 +61,8 @@ func (lR *kategoriRepository) CreateKategori(data entity.Kategori) error {
 }
 
 func (lR *kategoriRepository) Update(data entity.Kategori) error {
-	var record entity.Kategori
-	if err := lR.conn.First(&record, data.ID).Error; err != nil {
+	record := entity.Kategori{ID: data.ID}
+	if err := lR.conn.First(&record).Error; err != nil {
 		return errors.New("maaf data tidak ada")
 	}
 	if err := lR.conn.Save(&data).Error; err != nil {
@@ -74,14 +74,14 @@ func (lR *kategoriRepository) Update(data entity.Kategori) error {
 
 func (lR *kategoriRepository) MasterData(search string, limit int, pageParams int) []entity.Kategori {
 	kategori := []entity.Kategori{}
-	query := lR.conn.Where("nama like ? ", "%"+search+"%")
+	query := lR.conn.Where("nama like ? ", "%"+search+"%").Where("is_deleted = 0")
 	query.Scopes(utils.Paginate(&utils.PaginateParams{PageParams: pageParams, Limit: limit})).Find(&kategori)
 	return kategori
 }
 
 func (lR *kategoriRepository) MasterDataCount(search string) int64 {
 	var kategori []entity.Kategori
-	query := lR.conn.Where("nama like ? ", "%"+search+"%")
+	query := lR.conn.Where("nama like ? ", "%"+search+"%").Where("is_deleted = 0")
 	query.Select("id").Find(&kategori)
 	return int64(len(kategori))
 }

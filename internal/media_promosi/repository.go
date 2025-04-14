@@ -31,7 +31,7 @@ func NewMediaPromosiRepository(conn *gorm.DB) MediaPromosiRepository {
 
 func (lR *mediaPromosiRepository) MasterDataAll() []entity.MediaPromosi {
 	var mediaPromosis []entity.MediaPromosi
-	lR.conn.Select("id, nama").Find(&mediaPromosis)
+	lR.conn.Select("id, nama").Where("is_deleted = 0").Find(&mediaPromosis)
 	return mediaPromosis
 }
 
@@ -42,12 +42,15 @@ func (lR *mediaPromosiRepository) DetailMediaPromosi(id string) entity.MediaProm
 }
 
 func (lR *mediaPromosiRepository) Delete(id string, name string) error {
+
 	result := lR.conn.Model(&entity.MediaPromosi{}).Where("id = ?", id).Updates(map[string]interface{}{
         "is_deleted": true,
     })
 	if result.Error != nil {
 		return result.Error
 	}
+	lR.conn.Table("merchant_media_promosis").Where("MediaPromosiID = ?", id).Delete(nil)
+	lR.conn.Table("outlet_media_promosis").Where("MediaPromosiID = ?", id).Delete(nil)
 	return nil
 }
 
@@ -61,8 +64,8 @@ func (lR *mediaPromosiRepository) CreateMediaPromosi(data entity.MediaPromosi) e
 }
 
 func (lR *mediaPromosiRepository) Update(data entity.MediaPromosi) error {
-	var record entity.MediaPromosi
-	if err := lR.conn.First(&record, data.ID).Error; err != nil {
+	record := entity.MediaPromosi{ID: data.ID}
+	if err := lR.conn.First(&record).Error; err != nil {
 		return errors.New("maaf data tidak ada")
 	}
 	if err := lR.conn.Save(&data).Error; err != nil {
@@ -74,14 +77,14 @@ func (lR *mediaPromosiRepository) Update(data entity.MediaPromosi) error {
 
 func (lR *mediaPromosiRepository) MasterData(search string, limit int, pageParams int) []entity.MediaPromosi {
 	mediaPromosi := []entity.MediaPromosi{}
-	query := lR.conn.Where("nama like ? ", "%"+search+"%")
+	query := lR.conn.Where("nama like ? ", "%"+search+"%").Where("is_deleted = 0")
 	query.Scopes(utils.Paginate(&utils.PaginateParams{PageParams: pageParams, Limit: limit})).Find(&mediaPromosi)
 	return mediaPromosi
 }
 
 func (lR *mediaPromosiRepository) MasterDataCount(search string) int64 {
 	var mediaPromosi []entity.MediaPromosi
-	query := lR.conn.Where("nama like ? ", "%"+search+"%")
+	query := lR.conn.Where("nama like ? ", "%"+search+"%").Where("is_deleted = 0")
 	query.Select("id").Find(&mediaPromosi)
 	return int64(len(mediaPromosi))
 }

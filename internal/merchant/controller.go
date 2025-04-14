@@ -96,7 +96,8 @@ func (tr *mstMtrController) UpdateMerchant(ctx *fiber.Ctx) error {
 	body.UpdatedBy = details.Name
 	err = tr.mstMtrService.Update(body)
 	if err != nil {
-		return ctx.JSON(map[string]interface{}{"message": err.Error()})
+		fmt.Println("kesini gk sih ", err)
+		return ctx.Status(400).JSON(map[string]interface{}{"message": err.Error()})
 	}
 	return ctx.JSON(map[string]string{"message": "Berhasil Update"})
 }

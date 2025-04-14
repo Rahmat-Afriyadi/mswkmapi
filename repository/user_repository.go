@@ -58,7 +58,7 @@ func (lR *userRepository) CreateUser(data request.SignupRequest) (entity.User, e
 
 func (lR *userRepository) FindByUsername(username string) entity.UserS {
 	var user entity.UserS
-	lR.connUser.Where("username", username).Where("is_deleted = 0").First(&user)
+	lR.connUser.Where("username", username).Where("is_deleted = 0").Preload("Role").First(&user)
 
 	var permissions []entity.Permission
 	lR.connUser.Where("role_id", user.RoleId).Find(&permissions)

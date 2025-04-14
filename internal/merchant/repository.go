@@ -43,6 +43,12 @@ func (lR *merchantRepository) DetailMerchant(id string, lokasi string) Merchant 
 }
 
 func (lR *merchantRepository) CreateMerchant(data Merchant) error {
+	var count int64
+	lR.conn.Model(&Merchant{}).Where("pin = 1").Count(&count)
+	if count >= 18 && data.Pin {
+		return errors.New("maaf merchant sudah mencapai batas maksimal")
+		
+	}
 	kategori := data.Kategori
 	mediaPromosi := data.MediaPromosi
 	picMro := data.NamaPICMRO
@@ -79,9 +85,15 @@ func (lR *merchantRepository) Delete(id string, name string) error {
 }
 func (lR *merchantRepository) Update(data Merchant) error {
 	record := Merchant{ID: data.ID}
+	var count int64
+	lR.conn.Model(&Merchant{}).Where("pin = 1").Count(&count)
 	lR.conn.First(&record)
 	if record.Nama == "" {
 		return errors.New("maaf data tidak ada")
+	}
+	if count >= 18 && !record.Pin && data.Pin {
+		return errors.New("maaf merchant sudah mencapai batas maksimal")
+		
 	}
 	kategori := data.Kategori
 	mediaPromosi := data.MediaPromosi

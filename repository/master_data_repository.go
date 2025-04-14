@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"fmt"
 	"wkm/entity"
 
 	"gorm.io/gorm"
@@ -26,22 +25,21 @@ func NewMasterDataRepository(connGorm *gorm.DB) MasterDataRepository {
 
 func (s *masterDataRepository) KodeposAll() ([]entity.Kodepos, error) {
 	datas := []entity.Kodepos{}
-	s.connGorm.Find(&datas)
-	fmt.Println("keisni gk sih , datas", len(datas), datas[0])
+	s.connGorm.Where("is_deleted = 0").Find(&datas)
 	return datas, nil
 }
 func (s *masterDataRepository) KategoriMerchantAll() ([]entity.Kategori, error) {
 	datas := []entity.Kategori{}
-	s.connGorm.Find(&datas)
+	s.connGorm.Where("is_deleted = 0").Find(&datas)
 	return datas, nil
 }
 func (s *masterDataRepository) MediaPromosiAll() ([]entity.MediaPromosi, error) {
 	datas := []entity.MediaPromosi{}
-	s.connGorm.Find(&datas)
+	s.connGorm.Where("is_deleted = 0").Find(&datas)
 	return datas, nil
 }
 func (s *masterDataRepository) PicMroAll() ([]entity.PicMro, error) {
 	datas := []entity.PicMro{}
-	s.connGorm.Find(&datas)
+	s.connGorm.Where("is_deleted = 0").Find(&datas)
 	return datas, nil
 }

@@ -24,8 +24,8 @@ func RegisterRoutes(app *fiber.App, db *gorm.DB) {
 
 	
 	routes.Delete("/delete/:id", middleware.DeserializeUserAdmin, handler.DeleteMediaPromosi)
-	routes.Post("/create-mediaPromosi", middleware.DeserializeUserAdmin, handler.CreateMediaPromosi)
-	routes.Post("/update-mediaPromosi", middleware.DeserializeUserAdmin, handler.UpdateMediaPromosi)
+	routes.Post("/create-media-promosi", middleware.DeserializeUserAdmin, handler.CreateMediaPromosi)
+	routes.Post("/update-media-promosi", middleware.DeserializeUserAdmin, handler.UpdateMediaPromosi)
 }
 
 type MediaPromosiController interface {

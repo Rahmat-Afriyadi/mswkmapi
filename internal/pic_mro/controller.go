@@ -24,8 +24,8 @@ func RegisterRoutes(app *fiber.App, db *gorm.DB) {
 
 	
 	routes.Delete("/delete/:id", middleware.DeserializeUserAdmin, handler.DeletePicMro)
-	routes.Post("/create-picMro", middleware.DeserializeUserAdmin, handler.CreatePicMro)
-	routes.Post("/update-picMro", middleware.DeserializeUserAdmin, handler.UpdatePicMro)
+	routes.Post("/create-pic-mro", middleware.DeserializeUserAdmin, handler.CreatePicMro)
+	routes.Post("/update-pic-mro", middleware.DeserializeUserAdmin, handler.UpdatePicMro)
 }
 
 type PicMroController interface {

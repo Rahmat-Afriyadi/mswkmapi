@@ -132,7 +132,7 @@ func (aC *authController) SignInUserAdmin(c *fiber.Ctx) error {
 		HTTPOnly: true,
 	})
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": "success", "access_token": accessTokenDetails.Token, "name": user.Name, "refresh_token": refreshTokenDetails.Token, "permissions": user.Permissions, "role": user.RoleId})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": "success", "access_token": accessTokenDetails.Token, "name": user.Name, "refresh_token": refreshTokenDetails.Token, "permissions": user.Permissions, "role": user.RoleId, "role_name": user.Role.Name, "id": user.ID, "expired_at": time.Now().Add(time.Minute * 15).Format("2006-01-02 15:04:05")})
 }
 
 

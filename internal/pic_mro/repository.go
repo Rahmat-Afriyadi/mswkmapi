@@ -31,7 +31,7 @@ func NewPicMroRepository(conn *gorm.DB) PicMroRepository {
 
 func (lR *picMroRepository) MasterDataAll() []entity.PicMro {
 	var picMros []entity.PicMro
-	lR.conn.Select("id, nama").Find(&picMros)
+	lR.conn.Select("id, nama").Where("is_deleted = 0").Find(&picMros)
 	return picMros
 }
 
@@ -61,8 +61,8 @@ func (lR *picMroRepository) CreatePicMro(data entity.PicMro) error {
 }
 
 func (lR *picMroRepository) Update(data entity.PicMro) error {
-	var record entity.PicMro
-	if err := lR.conn.First(&record, data.ID).Error; err != nil {
+	record := entity.PicMro{ID: data.ID}
+	if err := lR.conn.First(&record).Error; err != nil {
 		return errors.New("maaf data tidak ada")
 	}
 	if err := lR.conn.Save(&data).Error; err != nil {
@@ -74,14 +74,14 @@ func (lR *picMroRepository) Update(data entity.PicMro) error {
 
 func (lR *picMroRepository) MasterData(search string, limit int, pageParams int) []entity.PicMro {
 	picMro := []entity.PicMro{}
-	query := lR.conn.Where("nama like ? ", "%"+search+"%")
+	query := lR.conn.Where("nama like ? ", "%"+search+"%").Where("is_deleted = 0")
 	query.Scopes(utils.Paginate(&utils.PaginateParams{PageParams: pageParams, Limit: limit})).Find(&picMro)
 	return picMro
 }
 
 func (lR *picMroRepository) MasterDataCount(search string) int64 {
 	var picMro []entity.PicMro
-	query := lR.conn.Where("nama like ? ", "%"+search+"%")
+	query := lR.conn.Where("nama like ? ", "%"+search+"%").Where("is_deleted = 0")
 	query.Select("id").Find(&picMro)
 	return int64(len(picMro))
 }
