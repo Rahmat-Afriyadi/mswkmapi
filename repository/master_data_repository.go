@@ -8,6 +8,7 @@ import (
 
 type MasterDataRepository interface {
 	KategoriMerchantAll() ([]entity.Kategori, error)
+	KategoriNewsAll() ([]entity.KategoriNews, error)
 	MediaPromosiAll() ([]entity.MediaPromosi, error)
 	PicMroAll() ([]entity.PicMro, error)
 	KodeposAll() ([]entity.Kodepos, error)
@@ -30,6 +31,11 @@ func (s *masterDataRepository) KodeposAll() ([]entity.Kodepos, error) {
 }
 func (s *masterDataRepository) KategoriMerchantAll() ([]entity.Kategori, error) {
 	datas := []entity.Kategori{}
+	s.connGorm.Where("is_deleted = 0").Find(&datas)
+	return datas, nil
+}
+func (s *masterDataRepository) KategoriNewsAll() ([]entity.KategoriNews, error) {
+	datas := []entity.KategoriNews{}
 	s.connGorm.Where("is_deleted = 0").Find(&datas)
 	return datas, nil
 }
