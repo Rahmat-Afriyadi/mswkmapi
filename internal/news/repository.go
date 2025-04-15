@@ -67,6 +67,12 @@ func (lR *newsRepository) Delete(id string, name string) error {
 }
 
 func (lR *newsRepository) CreateNews(data entity.News) error {
+	var count int64
+	lR.conn.Model(&entity.News{}).Where("pin = 1 and is_deleted=0").Count(&count)
+	if count >= 12 && data.Pin {
+		return errors.New("maaf news pin sudah mencapai batas maksimal")
+		
+	}
 	result := lR.conn.Save(&data)
 	if result.Error != nil {
 		fmt.Println("ini error ", result.Error)
@@ -77,8 +83,14 @@ func (lR *newsRepository) CreateNews(data entity.News) error {
 
 func (lR *newsRepository) Update(data entity.News) error {
 	record := entity.News{ID: data.ID}
-	if err := lR.conn.First(&record).Error; err != nil {
+	var count int64
+	lR.conn.Model(&entity.News{}).Where("pin = 1 and is_deleted=0").Count(&count)
+	lR.conn.First(&record)
+	if record.Nama == "" {
 		return errors.New("maaf data tidak ada")
+	}
+	if count >= 12 && !record.Pin && data.Pin {
+		return errors.New("maaf news pin sudah mencapai batas maksimal")
 	}
 	if err := lR.conn.Save(&data).Error; err != nil {
 		return err
