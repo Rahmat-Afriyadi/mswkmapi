@@ -8,7 +8,7 @@ import (
 
 type MasterDataController interface {
 	KategoriMerchantAll(ctx *fiber.Ctx) error
-	KategoriNewsAll(ctx *fiber.Ctx) error
+	NewsKategoriAll(ctx *fiber.Ctx) error
 	MediaPromosiAll(ctx *fiber.Ctx) error
 	PicMroAll(ctx *fiber.Ctx) error
 	KodeposAll(ctx *fiber.Ctx) error
@@ -28,8 +28,8 @@ func (c *masterDataController) KategoriMerchantAll(ctx *fiber.Ctx) error {
 	data, _ := c.mS.KategoriMerchantAll()
 	return ctx.JSON(map[string]interface{}{"data": data, "message": "Berhasil"})
 }
-func (c *masterDataController) KategoriNewsAll(ctx *fiber.Ctx) error {
-	data, _ := c.mS.KategoriNewsAll()
+func (c *masterDataController) NewsKategoriAll(ctx *fiber.Ctx) error {
+	data, _ := c.mS.NewsKategoriAll()
 	return ctx.JSON(map[string]interface{}{"data": data, "message": "Berhasil"})
 }
 func (c *masterDataController) KodeposAll(ctx *fiber.Ctx) error {

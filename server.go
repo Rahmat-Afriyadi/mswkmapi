@@ -10,6 +10,7 @@ import (
 	mediaPromosi "wkm/internal/media_promosi"
 	"wkm/internal/merchant"
 	"wkm/internal/news"
+	newsKategori "wkm/internal/news_category"
 	"wkm/internal/outlet"
 	picMro "wkm/internal/pic_mro"
 	"wkm/internal/role"
@@ -57,7 +58,7 @@ func main() {
 
 	defer sqlConnMain.Close()
 
-	connMain.AutoMigrate(&entity.KategoriNews{})
+	connMain.AutoMigrate(&entity.NewsKategori{})
 	connMain.AutoMigrate(&entity.News{})
 
 	app := fiber.New(fiber.Config{})
@@ -97,7 +98,7 @@ func main() {
 
 	masterData := app.Group("/master-data")
 	masterData.Get("/kategori-merchant", middleware.DeserializeUser, masterDataController.KategoriMerchantAll)
-	masterData.Get("/kategori-news", middleware.DeserializeUser, masterDataController.KategoriNewsAll)
+	masterData.Get("/kategori-news", middleware.DeserializeUser, masterDataController.NewsKategoriAll)
 	masterData.Get("/media-promosi", middleware.DeserializeUser, masterDataController.MediaPromosiAll)
 	masterData.Get("/pic-mro", middleware.DeserializeUser, masterDataController.PicMroAll)
 	masterData.Get("/kodepos", middleware.DeserializeUser, masterDataController.KodeposAll)
@@ -118,6 +119,7 @@ func main() {
 	mediaPromosi.RegisterRoutes(app, connMain)
 	picMro.RegisterRoutes(app, connMain)
 	news.RegisterRoutes(app, connMain)
+	newsKategori.RegisterRoutes(app, connMain)
 
 	app.Listen(":" + os.Getenv("PORT"))
 

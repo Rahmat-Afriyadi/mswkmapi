@@ -7,7 +7,7 @@ import (
 
 type MasterDataService interface {
 	KategoriMerchantAll() ([]entity.Kategori, error)
-	KategoriNewsAll() ([]entity.KategoriNews, error)
+	NewsKategoriAll() ([]entity.NewsKategori, error)
 	MediaPromosiAll() ([]entity.MediaPromosi, error)
 	PicMroAll() ([]entity.PicMro, error)
 	KodeposAll() ([]entity.Kodepos, error)
@@ -29,8 +29,8 @@ func (s *masterDataService) KodeposAll() ([]entity.Kodepos, error) {
 func (s *masterDataService) KategoriMerchantAll() ([]entity.Kategori, error) {
 	return s.mR.KategoriMerchantAll()
 }
-func (s *masterDataService) KategoriNewsAll() ([]entity.KategoriNews, error) {
-	return s.mR.KategoriNewsAll()
+func (s *masterDataService) NewsKategoriAll() ([]entity.NewsKategori, error) {
+	return s.mR.NewsKategoriAll()
 }
 func (s *masterDataService) MediaPromosiAll() ([]entity.MediaPromosi, error) {
 	return s.mR.MediaPromosiAll()

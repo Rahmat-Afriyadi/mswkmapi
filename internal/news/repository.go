@@ -42,7 +42,7 @@ func (lR *newsRepository) MasterDataSearch(search string) []entity.News {
 	query := lR.conn.Select("DISTINCT news.id, news.nama").Where("news.is_deleted = 0")
 	if search != "" {
 		query.Joins("JOIN news_kategoris a ON a.NewsID = news.id").
-			Joins("JOIN mst_kategori_news b ON a.KategorNewsiID = b.id").
+			Joins("JOIN mst_kategori_news b ON a.NewsKategoriID = b.id").
 			Where("news.nama like ? or news.deskripsi like ? or b.nama like ? ", "%"+search+"%", "%"+search+"%", "%"+search+"%")
 	}
 	query.Limit(3).Find(&news)
