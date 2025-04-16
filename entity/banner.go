@@ -1,0 +1,32 @@
+package entity
+
+import (
+	"time"
+
+	"github.com/google/uuid"
+	"gorm.io/gorm"
+)
+
+type Banner struct {
+	ID           string         `form:"id" json:"id" gorm:"type:varchar(36);primary_key;column:id"`
+	IsActive     bool           `form:"is_active" json:"is_active" gorm:"column:is_active;default:true"`
+	Pin     bool           `form:"pin" json:"pin" gorm:"column:pin;default:false"`
+	IsDeleted     bool                  `form:"is_deleted" json:"is_deleted" gorm:"column:is_deleted;default:false"`
+	Banner       string         `form:"banner" json:"banner" gorm:"type:varchar(100);column:banner"`
+	CreatedBy    string         `form:"created_by" json:"created_by" gorm:"type:varchar(100);column:created_by"`
+	UpdatedBy    string         `form:"updated_by" json:"updated_by" gorm:"type:varchar(100);column:updated_by"`
+	CreatedAt    *time.Time     `form:"created_at" json:"created_at" gorm:"column:created_at;autoCreateTime"`
+	UpdatedAt    *time.Time     `form:"updated_at" json:"updated_at" gorm:"column:updated_at;autoCreateTime;autoUpdateTime"`
+
+}
+
+func (Banner) TableName() string {
+	return "banners"
+}
+
+func (b *Banner) BeforeCreate(tx *gorm.DB) (err error) {
+	if b.ID == "" {
+		b.ID = uuid.New().String()
+	}
+	return
+}

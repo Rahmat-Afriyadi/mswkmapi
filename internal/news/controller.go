@@ -16,6 +16,8 @@ func RegisterRoutes(app *fiber.App, db *gorm.DB) {
 	handler := NewNewsController(service)
 
 	routes := app.Group("/news")
+	routes.Get("/master-data/pin", handler.MasterDataPin)
+
 	routes.Get("/master-data/filter", handler.MasterData)
 	routes.Get("/master-data/search", handler.MasterDataSearch)
 	routes.Get("/master-data", middleware.DeserializeUser, handler.MasterData)
@@ -31,6 +33,7 @@ func RegisterRoutes(app *fiber.App, db *gorm.DB) {
 }
 
 type NewsController interface {
+	MasterDataPin(ctx *fiber.Ctx) error
 	CreateNews(ctx *fiber.Ctx) error
 	UpdateNews(ctx *fiber.Ctx) error
 	MasterDataAll(ctx *fiber.Ctx) error
@@ -49,6 +52,14 @@ func NewNewsController(aS NewsService) NewsController {
 	return &newsController{
 		newsService: aS,
 	}
+}
+
+func (tr *newsController) MasterDataPin(ctx *fiber.Ctx) error {
+	data, err := tr.newsService.MasterDataPin()
+	if err != nil {
+		return ctx.Status(500).JSON(map[string]interface{}{"message": err.Error()}) 
+	}
+	return ctx.JSON(data)
 }
 
 func (tr *newsController) MasterDataAll(ctx *fiber.Ctx) error {

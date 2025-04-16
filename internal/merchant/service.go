@@ -1,6 +1,7 @@
 package merchant
 
 type MerchantService interface {
+	MasterDataPin() ([]Merchant, error)
 	CreateMerchant(data Merchant) error
 	MasterData(search string, kategori string, lokasi string, limit int, pageParams int) []Merchant
 	MasterDataCount(search string, kategori string, lokasi string) int64
@@ -21,6 +22,9 @@ func NewMerchantService(tR MerchantRepository) MerchantService {
 	}
 }
 
+func (s *mstMtrService) MasterDataPin() ([]Merchant, error) {
+	return s.trR.MasterDataPin()
+}
 func (s *mstMtrService) Update(body Merchant) error {
 	return s.trR.Update(body)
 }

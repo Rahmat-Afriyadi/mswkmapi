@@ -18,6 +18,7 @@ type Merchant struct {
 	IsActive     bool                  `form:"is_active" json:"is_active" gorm:"column:is_active;default:true"`
 	IsDeleted     bool                  `form:"is_deleted" json:"is_deleted" gorm:"column:is_deleted;default:true"`
 	Pin     bool                  `form:"pin" json:"pin" gorm:"column:pin;default:true"`
+	HomePin     bool                  `form:"home_pin" json:"home_pin" gorm:"column:home_pin;default:false"`
 	ValidFrom    time.Time             `form:"valid_from" json:"valid_from" gorm:"type:DATE;column:valid_from"`
 	ValidThru    time.Time             `form:"valid_thru" json:"valid_thru" gorm:"type:DATE;column:valid_thru"`
 	Logo         string                `form:"logo" json:"logo" gorm:"type:varchar(100);column:logo"`

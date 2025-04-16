@@ -13,6 +13,7 @@ type News struct {
 	IsActive     bool           `form:"is_active" json:"is_active" gorm:"column:is_active;default:true"`
 	Pin     bool           `form:"pin" json:"pin" gorm:"column:pin;default:false"`
 	IsDeleted     bool                  `form:"is_deleted" json:"is_deleted" gorm:"column:is_deleted;default:false"`
+	HomePin     bool                  `form:"home_pin" json:"home_pin" gorm:"column:home_pin;default:false"`
 	Kategori     []NewsKategori     `json:"kategori" gorm:"many2many:news_kategori;association_autocreate:false;"`
 	Deskripsi    string         `form:"deskripsi" json:"deskripsi" gorm:"column:deskripsi;"`
 	Logo         string         `form:"logo" json:"logo" gorm:"type:varchar(100);column:logo"`

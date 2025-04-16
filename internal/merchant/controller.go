@@ -22,6 +22,7 @@ func RegisterRoutes(app *fiber.App, db *gorm.DB) {
 	})
 
 	routes := app.Group("/merchants")
+	routes.Get("/master-data/pin", handler.MasterDataPin)
 	routes.Get("/master-data/filter", handler.MasterData)
 	routes.Get("/master-data", middleware.DeserializeUser, handler.MasterData)
 	routes.Get("/master-data/search", handler.MasterDataSearch)
@@ -35,6 +36,7 @@ func RegisterRoutes(app *fiber.App, db *gorm.DB) {
 }
 
 type MerchantController interface {
+	MasterDataPin(ctx *fiber.Ctx) error
 	CreateMerchant(ctx *fiber.Ctx) error
 	UpdateMerchant(ctx *fiber.Ctx) error
 	DeleteMerchant(ctx *fiber.Ctx) error
@@ -59,6 +61,14 @@ func (tr *mstMtrController) DetailMerchant(ctx *fiber.Ctx) error {
 	id := ctx.Params("id")
 	lokasi := ctx.Query("lokasi")
 	return ctx.JSON(tr.mstMtrService.DetailMerchant(id, lokasi))
+}
+func (tr *mstMtrController) MasterDataPin(ctx *fiber.Ctx) error {
+	data, err := tr.mstMtrService.MasterDataPin()
+	if err != nil {
+		return ctx.Status(500).JSON(map[string]interface{}{"message": err.Error()}) 
+		
+	}
+	return ctx.JSON(data)
 }
 
 func (tr *mstMtrController) MasterDataAll(ctx *fiber.Ctx) error {

@@ -10,6 +10,7 @@ import (
 )
 
 type MerchantRepository interface {
+	MasterDataPin() ([]Merchant,error)
 	CreateMerchant(data Merchant) error
 	MasterData(search string, kategori string, lokasi string, limit int, pageParams int) []Merchant
 	MasterDataSearch(search string) []Merchant
@@ -30,6 +31,12 @@ func NewMerchantRepository(conn *gorm.DB) MerchantRepository {
 	}
 }
 
+func (lR *merchantRepository) MasterDataPin() ([]Merchant,error) {
+	merchant := []Merchant{}
+	lR.conn.Where("home_pin = 1 and is_deleted=0").Select("id, banner, home_pin").Limit(5).Find(&merchant).Order("updated_at desc")
+	return merchant,nil
+}
+
 func (lR *merchantRepository) DetailMerchant(id string, lokasi string) Merchant {
 	merchant := Merchant{ID: id}
 	query := lR.conn.Preload("Kategori").Preload("MediaPromosi").Preload("NamaPICMRO")
@@ -47,7 +54,11 @@ func (lR *merchantRepository) CreateMerchant(data Merchant) error {
 	lR.conn.Model(&Merchant{}).Where("pin = 1 and is_deleted=0").Count(&count)
 	if count >= 18 && data.Pin {
 		return errors.New("maaf merchant sudah mencapai batas maksimal")
-		
+	}
+	var countHomePin int64
+	lR.conn.Model(&Merchant{}).Where("home_pin = 1 and is_deleted=0").Count(&countHomePin)
+	if countHomePin >= 5 && data.Pin {
+		return errors.New("maaf merchant home pin sudah mencapai batas maksimal")
 	}
 	kategori := data.Kategori
 	mediaPromosi := data.MediaPromosi
@@ -93,6 +104,11 @@ func (lR *merchantRepository) Update(data Merchant) error {
 	}
 	if count >= 18 && !record.Pin && data.Pin {
 		return errors.New("maaf merchant pin sudah mencapai batas maksimal")
+	}
+	var countHomePin int64
+	lR.conn.Model(&Merchant{}).Where("pin = 1 and is_deleted=0").Count(&countHomePin)
+	if countHomePin >= 5 && !record.HomePin && data.HomePin {
+		return errors.New("maaf merchant home pin sudah mencapai batas maksimal")
 	}
 	kategori := data.Kategori
 	mediaPromosi := data.MediaPromosi

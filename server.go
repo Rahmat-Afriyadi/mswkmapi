@@ -6,6 +6,7 @@ import (
 	"wkm/config"
 	"wkm/controller"
 	"wkm/entity"
+	"wkm/internal/banner"
 	"wkm/internal/kategori"
 	mediaPromosi "wkm/internal/media_promosi"
 	"wkm/internal/merchant"
@@ -58,8 +59,8 @@ func main() {
 
 	defer sqlConnMain.Close()
 
-	connMain.AutoMigrate(&entity.NewsKategori{})
-	connMain.AutoMigrate(&entity.News{})
+	// connMain.AutoMigrate(&entity.NewsKategori{})
+	connMain.AutoMigrate(&entity.Banner{})
 
 	app := fiber.New(fiber.Config{})
 	app.Static("/uploads", "./uploads")
@@ -120,6 +121,7 @@ func main() {
 	picMro.RegisterRoutes(app, connMain)
 	news.RegisterRoutes(app, connMain)
 	newsKategori.RegisterRoutes(app, connMain)
+	banner.RegisterRoutes(app, connMain)
 
 	app.Listen(":" + os.Getenv("PORT"))
 

@@ -3,6 +3,7 @@ package news
 import "wkm/entity"
 
 type NewsService interface {
+	MasterDataPin() ([]entity.News,error)
 	CreateNews(data entity.News) error
 	MasterData(search string, limit int, pageParams int) []entity.News
 	MasterDataCount(search string) int64
@@ -25,6 +26,9 @@ func NewNewsService(tR NewsRepository) NewsService {
 
 func (s *newsService) MasterDataAll() []entity.News {
 	return s.trR.MasterDataAll()
+}
+func (s *newsService) MasterDataPin() ([]entity.News, error) {
+	return s.trR.MasterDataPin()
 }
 func (s *newsService) MasterDataSearch(search string) []entity.News {
 	return s.trR.MasterDataSearch(search)

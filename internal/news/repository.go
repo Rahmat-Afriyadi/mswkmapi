@@ -10,6 +10,7 @@ import (
 )
 
 type NewsRepository interface {
+	MasterDataPin() ([]entity.News,error)
 	CreateNews(data entity.News) error
 	MasterDataAll() []entity.News
 	MasterData(search string, limit int, pageParams int) []entity.News
@@ -29,6 +30,12 @@ func NewNewsRepository(conn *gorm.DB) NewsRepository {
 	return &newsRepository{
 		conn: conn,
 	}
+}
+
+func (lR *newsRepository) MasterDataPin() ([]entity.News,error) {
+	news := []entity.News{}
+	lR.conn.Where("home_pin = 1 and is_deleted=0").Select("id, banner, home_pin").Find(&news).Order("updated_at desc")
+	return news,nil
 }
 
 func (lR *newsRepository) MasterDataAll() []entity.News {
@@ -71,7 +78,11 @@ func (lR *newsRepository) CreateNews(data entity.News) error {
 	lR.conn.Model(&entity.News{}).Where("pin = 1 and is_deleted=0").Count(&count)
 	if count >= 12 && data.Pin {
 		return errors.New("maaf news pin sudah mencapai batas maksimal")
-		
+	}
+	var countHomePin int64
+	lR.conn.Model(&entity.News{}).Where("home_pin = 1 and is_deleted=0").Count(&countHomePin)
+	if countHomePin >= 5 && data.Pin {
+		return errors.New("maaf news pin sudah mencapai batas maksimal")
 	}
 	result := lR.conn.Save(&data)
 	if result.Error != nil {
@@ -91,6 +102,11 @@ func (lR *newsRepository) Update(data entity.News) error {
 	}
 	if count >= 12 && !record.Pin && data.Pin {
 		return errors.New("maaf news pin sudah mencapai batas maksimal")
+	}
+	var countHomePin int64
+	lR.conn.Model(&entity.News{}).Where("pin = 1 and is_deleted=0").Count(&countHomePin)
+	if countHomePin >= 5 && !record.HomePin && data.HomePin {
+		return errors.New("maaf news home pin sudah mencapai batas maksimal")
 	}
 	if err := lR.conn.Save(&data).Error; err != nil {
 		return err
